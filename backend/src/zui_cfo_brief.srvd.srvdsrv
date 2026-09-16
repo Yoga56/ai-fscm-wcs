@@ -1,0 +1,8 @@
+@EndUserText.label: 'CFO Daily Brief - UI Service (freestyle UI5, OData V4)'
+define service ZUI_CFO_BRIEF {
+  expose ZC_CFO_Brief       as Brief;
+  expose ZC_CFO_RunwayDay   as RunwayDay;
+  expose ZC_CFO_Risk        as Risk;
+  expose ZC_CFO_TradeOff    as TradeOff;
+  expose ZC_CFO_ActionDraft as ActionDraft;
+}

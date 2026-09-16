@@ -1,0 +1,55 @@
+projection;
+strict ( 2 );
+
+define behavior for ZC_CFO_Brief alias Brief
+use etag
+{
+  use update;
+  use delete;
+
+  use action generateBrief;
+  use action refreshAi;
+  use action simulate;
+  use action askCopilot;
+  use action proposeRunExceptions;
+
+  use association _RunwayDay;
+  use association _Risk;
+  use association _TradeOff;
+  use association _ActionDraft;
+}
+
+define behavior for ZC_CFO_RunwayDay alias RunwayDay
+use etag
+{
+  use association _Brief;
+}
+
+define behavior for ZC_CFO_Risk alias Risk
+use etag
+{
+  use action draftCollectionNotice;
+
+  use association _Brief;
+}
+
+define behavior for ZC_CFO_TradeOff alias TradeOff
+use etag
+{
+  use action proposeDecision;
+
+  use association _Brief;
+}
+
+define behavior for ZC_CFO_ActionDraft alias ActionDraft
+use etag
+{
+  use update;
+  use delete;
+
+  use action submitForApproval;
+  use action approve;
+  use action reject;
+
+  use association _Brief;
+}

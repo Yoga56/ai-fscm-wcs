@@ -1,0 +1,9 @@
+@EndUserText.label: 'CFO Daily Brief - projection access'
+@MappingRole: true
+define role ZC_CFO_BRIEF {
+  grant select on ZC_CFO_Brief       where inheriting conditions from entity ZR_CFO_Brief;
+  grant select on ZC_CFO_RunwayDay   where inheriting conditions from entity ZR_CFO_RunwayDay;
+  grant select on ZC_CFO_Risk        where inheriting conditions from entity ZR_CFO_Risk;
+  grant select on ZC_CFO_TradeOff    where inheriting conditions from entity ZR_CFO_TradeOff;
+  grant select on ZC_CFO_ActionDraft where inheriting conditions from entity ZR_CFO_ActionDraft;
+}

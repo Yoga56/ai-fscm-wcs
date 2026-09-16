@@ -1,0 +1,4 @@
+node_modules/
+app/cfobrief/dist/
+app/cfobrief/mock/data/generated/
+.DS_Store

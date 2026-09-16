@@ -1,0 +1,9 @@
+CLASS zbp_r_cfo_brief DEFINITION
+  PUBLIC
+  ABSTRACT
+  FINAL
+  FOR BEHAVIOR OF zr_cfo_brief.
+ENDCLASS.
+
+CLASS zbp_r_cfo_brief IMPLEMENTATION.
+ENDCLASS.

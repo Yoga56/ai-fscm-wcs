@@ -1,0 +1,28 @@
+# Local mode: no backend. The Fiori elements mock server serves metadata.xml and
+# the scenario from mock/ (the same rules as the ABAP engine, see mock/engine).
+specVersion: "4.0"
+metadata:
+  name: cfo.brief
+type: application
+framework:
+  name: SAPUI5
+  version: "1.136.0"
+  libraries:
+    - name: sap.m
+    - name: sap.f
+    - name: sap.ui.core
+    - name: sap.ui.layout
+    - name: sap.viz
+    - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        services:
+          - urlPath: /sap/opu/odata4/sap/zui_cfo_brief_o4/srvd/sap/zui_cfo_brief/0001
+            metadataPath: ./webapp/localService/metadata.xml
+            mockdataPath: ./mock/data
+            generateMockData: false
+        annotations: []

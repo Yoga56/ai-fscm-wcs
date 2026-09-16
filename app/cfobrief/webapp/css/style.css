@@ -1,0 +1,58 @@
+/* CFO Daily Brief - slide palette on top of sap_horizon */
+.cfoKpiRow { gap: 0.75rem; }
+.cfoKpi {
+  min-width: 13rem;
+  flex: 1 1 13rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  background: var(--sapTile_Background, #fff);
+  box-shadow: var(--sapContent_Shadow0);
+  border: 1px solid var(--sapTile_BorderColor, #e5e5e5);
+}
+.cfoKpi .cfoKpiValue { font-size: 1.75rem; font-weight: 700; line-height: 1.2; margin: 0.25rem 0; }
+.cfoKpiAlert { border-left: 4px solid var(--sapNegativeColor, #b3261e); }
+.cfoKpiWarn { border-left: 4px solid var(--sapCriticalColor, #e76500); }
+.cfoKpiOk { border-left: 4px solid var(--sapPositiveColor, #1b6e3a); }
+
+.cfoHeadline { font-size: 1.125rem; font-weight: 700; }
+.cfoMuted { color: var(--sapContent_LabelColor); }
+.cfoSection { margin-top: 1rem; }
+.cfoSideTitle { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;
+  color: var(--sapContent_LabelColor); margin: 1rem 0 0.25rem; }
+
+/* E-P-R-A-D badges */
+.epard { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem;
+  border-radius: 50%; color: #fff; font-weight: 700; font-size: 0.75rem; margin-right: 0.25rem; }
+.epard-E { background: #1d7f74; }
+.epard-P { background: #3f3fa8; }
+.epard-R { background: #a6700b; }
+.epard-A { background: #7a2a55; }
+.epard-D { background: #2c6e3a; }
+
+/* advice cards */
+.cfoAdvice { padding: 1rem; height: 100%; box-sizing: border-box; }
+.cfoAdviceRec { margin-top: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+  background: var(--sapSuccessBackground, #e7f4ea); border: 1px solid var(--sapSuccessBorderColor, #1b6e3a); }
+.cfoAdviceHeld .cfoAdviceRec { background: var(--sapInformationBackground, #eef1fb);
+  border-color: var(--sapInformationBorderColor, #3f3fa8); }
+.cfoIncome { font-size: 1.75rem; font-weight: 700; color: var(--sapPositiveTextColor, #1b6e3a); }
+.cfoCaveat { font-style: italic; color: var(--sapContent_LabelColor); font-size: 0.8125rem; }
+
+/* copilot */
+.cfoChatUser { background: var(--sapList_SelectionBackgroundColor, #eef1fb); border-radius: 0.5rem; padding: 0.5rem 0.75rem; }
+.cfoChatAi { border-left: 3px solid #1a1f4d; padding: 0.25rem 0.75rem; }
+.cfoPrompt { margin: 0 0.25rem 0.25rem 0; }
+
+/* inbox preview */
+.cfoMail { max-width: 46rem; }
+.cfoMail h3 { margin: 0.25rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 3px solid #1a1f4d; }
+.cfoMail .sec { margin: 1rem 0 0.25rem; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 700; color: var(--sapContent_LabelColor); }
+.cfoMail .neg { color: var(--sapNegativeTextColor, #b3261e); font-weight: 700; }
+.cfoMail .pos { color: var(--sapPositiveTextColor, #1b6e3a); font-weight: 700; }
+.cfoBase { min-width: 18rem; }
+.cfoFooter { padding: 0.75rem 1rem; border-radius: 0.5rem; background: var(--sapInformationBackground, #eef1fb); }
+
+/* ObjectNumber keeps its own font metrics - align it with the Text KPIs */
+.cfoKpi .sapMObjectNumber.cfoKpiValue { line-height: 1.3; overflow: visible; }
+.cfoKpi .sapMObjectNumber.cfoKpiValue .sapMObjectNumberText { font-size: 1.75rem; line-height: 1.3; }
