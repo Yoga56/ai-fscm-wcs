@@ -41,7 +41,7 @@ see `docs/scenario.md` in the local working copy.
 
 ```
 Freestyle SAPUI5 (app/cfobrief)                   Cockpit · What-if · Drafts · Copilot · Inbox view
-        │  OData V4  /sap/opu/odata4/sap/zui_cfo_brief_o4/…
+        │  OData V4  /sap/opu/odata4/sap/zui_cfo_brief/…
 ZUI_CFO_BRIEF  ─ ZC_CFO_Brief ─┬─ ZC_CFO_RunwayDay      projections (+ DCL ZC_CFO_BRIEF)
                                ├─ ZC_CFO_Risk
                                ├─ ZC_CFO_TradeOff
@@ -131,7 +131,7 @@ editor the content goes into. Create them in this order:
 9. **BO views** — `ZR_CFO_RunwayDay`, `ZR_CFO_Risk`, `ZR_CFO_TradeOff`, `ZR_CFO_ActionDraft`, `ZR_CFO_Brief`, then the `ZC_*` projections
 10. **Access control** — authorization object `ZCFO_BRF` (`docs/setup.md` §1 (local working copy)), DCLs `ZR_CFO_BRIEF`, `ZC_CFO_BRIEF`
 11. **Behavior** — BDEF `ZR_CFO_Brief` → behavior pool `ZBP_R_CFO_BRIEF` (`.clas.abap` + `.locals_imp.abap`) → projection BDEF `ZC_CFO_Brief`
-12. **Service** — `ZUI_CFO_BRIEF`, binding `ZUI_CFO_BRIEF_O4` (OData V4 - UI), publish
+12. **Service** — `ZUI_CFO_BRIEF`, binding `ZUI_CFO_BRIEF` (OData V4 - UI), publish
 13. **Job** — `ZCL_CFO_BRIEF_JOB` + catalog entry, template, log object (`docs/setup.md` §4 (local working copy))
 14. **Tests** — paste `*.testclasses.abap` into the *Test Classes* tab of `ZCL_CFO_BRIEF_BUILDER` and `ZCL_CFO_AI_ADVISOR`
 15. Run `ZCL_CFO_DEMO_SEED`, then `ZCL_CFO_SMOKE_TEST`
