@@ -123,6 +123,14 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
     ENDLOOP.
 
     IF ls_failed-brief IS NOT INITIAL OR lt_result IS INITIAL.
+      LOOP AT ls_failed-brief INTO DATA(ls_fail).
+        out->write( |Failure cause : { SWITCH string( ls_fail-%fail-cause
+                                        WHEN if_abap_behv=>cause-unauthorized THEN `unauthorized (ZCFO_BRF)`
+                                        WHEN if_abap_behv=>cause-not_found    THEN `not found`
+                                        WHEN if_abap_behv=>cause-locked       THEN `locked`
+                                        WHEN if_abap_behv=>cause-disabled     THEN `disabled`
+                                        ELSE |code { ls_fail-%fail-cause }| ) }| ).
+      ENDLOOP.
       ROLLBACK ENTITIES.
       out->write( `Brief NOT generated. If the message above is about authorization, assign a ` &&
                   `business role that grants ZCFO_BRF (activity 01, company code 1000) and run again.` ).
