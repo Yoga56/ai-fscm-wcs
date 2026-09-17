@@ -15,7 +15,7 @@
    <TOBJT>
     <LANGU>E</LANGU>
     <OBJECT>ZCFO_BRF</OBJECT>
-    <TTEXT>ZCFO_BRF</TTEXT>
+    <TTEXT>CFO Daily Brief</TTEXT>
    </TOBJT>
    <TACTZ>
     <TACTZ>
@@ -33,6 +33,10 @@
     <TACTZ>
      <BROBJ>ZCFO_BRF</BROBJ>
      <ACTVT>06</ACTVT>
+    </TACTZ>
+    <TACTZ>
+     <BROBJ>ZCFO_BRF</BROBJ>
+     <ACTVT>43</ACTVT>
     </TACTZ>
    </TACTZ>
   </asx:values>

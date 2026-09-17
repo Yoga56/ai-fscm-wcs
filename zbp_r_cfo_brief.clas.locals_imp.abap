@@ -1393,7 +1393,7 @@ CLASS lsc_zr_cfo_brief IMPLEMENTATION.
             iv_note     = ls_action-InternalNote
             iv_author   = ls_action-CreatedBy ).
         CATCH zcx_cfo_error INTO DATA(lx_error).
-          APPEND VALUE #( %tky = ls_action-%tky
+          APPEND VALUE #( %key = ls_action-%key
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-warning
                                                         text     = |Routed, but no e-mail sent: { lx_error->text }| ) )
                  TO reported-actiondraft.

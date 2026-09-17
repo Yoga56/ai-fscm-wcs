@@ -1,13 +1,9 @@
-class ZBP_R_CFO_BRIEF definition
-  public
-  create private .
-
-public section.
-protected section.
-private section.
+CLASS zbp_r_cfo_brief DEFINITION
+  PUBLIC
+  ABSTRACT
+  FINAL
+  FOR BEHAVIOR OF zr_cfo_brief.
 ENDCLASS.
 
-
-
-CLASS ZBP_R_CFO_BRIEF IMPLEMENTATION.
+CLASS zbp_r_cfo_brief IMPLEMENTATION.
 ENDCLASS.
