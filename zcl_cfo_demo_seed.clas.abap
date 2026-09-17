@@ -101,7 +101,49 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
     DATA(lv_anchor) = deploy( ).
     out->write( |Demo scenario deployed for company code { c_company }, brief date | &&
                 |{ zcl_cfo_calendar=>short_text( lv_anchor ) } ({ zcl_cfo_calendar=>iso( lv_anchor ) }).| ).
-    out->write( `Next: run ZCL_CFO_SMOKE_TEST, or open the app and press "Generate brief".` ).
+
+    " Save one brief right away, through the BO (same call as the daily job), so the
+    " service has something to show. This runs the authorization check for ZCFO_BRF.
+    MODIFY ENTITIES OF zr_cfo_brief
+      ENTITY Brief
+        EXECUTE generateBrief
+        FROM VALUE #( ( %cid = 'SEED' %param-CompanyCode = c_company %param-BriefDate = lv_anchor ) )
+      RESULT DATA(lt_result)
+      FAILED DATA(ls_failed)
+      REPORTED DATA(ls_reported).
+
+    LOOP AT ls_reported-brief INTO DATA(ls_msg).
+      IF ls_msg-%msg IS BOUND.
+        out->write( |Message       : { ls_msg-%msg->if_message~get_text( ) }| ).
+      ENDIF.
+    ENDLOOP.
+
+    IF ls_failed-brief IS NOT INITIAL OR lt_result IS INITIAL.
+      ROLLBACK ENTITIES.
+      out->write( `Brief NOT generated. If the message above is about authorization, assign a ` &&
+                  `business role that grants ZCFO_BRF (activity 01, company code 1000) and run again.` ).
+      RETURN.
+    ENDIF.
+
+    COMMIT ENTITIES
+      RESPONSE OF zr_cfo_brief
+      FAILED DATA(ls_commit_failed)
+      REPORTED DATA(ls_commit_reported).
+
+    IF ls_commit_failed-brief IS NOT INITIAL.
+      LOOP AT ls_commit_reported-brief INTO DATA(ls_late_msg).
+        IF ls_late_msg-%msg IS BOUND.
+          out->write( |Message       : { ls_late_msg-%msg->if_message~get_text( ) }| ).
+        ENDIF.
+      ENDLOOP.
+      out->write( `Brief could not be saved.` ).
+      RETURN.
+    ENDIF.
+
+    DATA(ls_brief) = lt_result[ 1 ]-%param.
+    out->write( |Brief saved   : { ls_brief-Headline } (engine { ls_brief-Engine })| ).
+    out->write( `Next: open the service preview (entity Brief) or the app. You only see rows ` &&
+                `if your business role grants ZCFO_BRF for company code 1000.` ).
   ENDMETHOD.
 
 
