@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "backend" / "src"
+SRC = ROOT  # flat, abapGit-managed folder at the repo root
 OUT = ROOT / "app" / "cfobrief" / "webapp" / "localService" / "metadata.xml"
 NS = "com.sap.gateway.srvd.zui_cfo_brief.v0001"
 
@@ -51,18 +51,18 @@ def edm(abap):
 
 
 def table_types(table):
-    src = (SRC / "db" / f"{table}.tabl.asddls").read_text()
+    src = (SRC / f"{table}.tabl.asddls").read_text()
     return dict(re.findall(r"^\s*(?:key\s+)?(\w+)\s*:\s*([\w.(),]+)", src, re.M))
 
 
 def view_fields(view):
-    src = (SRC / "cds" / f"{view}.ddls.asddls").read_text()
+    src = (SRC / f"{view}.ddls.asddls").read_text()
     body = src[src.index("{", src.index("define")) + 1:]
     return re.findall(r"^\s*(?:key\s+)?(\w+)?\s*as\s+(\w+)", body, re.M), body
 
 
 def abstract(name):
-    src = (SRC / "cds" / f"{name.lower()}.ddls.asddls").read_text()
+    src = (SRC / f"{name.lower()}.ddls.asddls").read_text()
     return re.findall(r"^\s*(\w+)\s*:\s*([\w.(),]+);", src, re.M)
 
 

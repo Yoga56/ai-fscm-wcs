@@ -6,7 +6,7 @@ items, clearing history, bank cash and the payment-run proposal into a ranked, r
 **E**xplain why a number moved · **P**redict pay dates and the cash low point · **R**ank risks by
 impact × probability · **A**dvise on trade-offs and opportunities · **D**raft the letter or approval.
 
-- **Backend:** RAP (ABAP for Cloud Development), OData V4 — `backend/src`
+- **Backend:** RAP (ABAP for Cloud Development), OData V4 — repository root (abapGit-managed)
 - **Frontend:** freestyle SAPUI5 — `app/cfobrief`
 - **AI:** Gemini through the BTP destination shared with `ABAP_CLEAN_CORE_ANALYSIS`
 
@@ -98,10 +98,12 @@ The mock server serves `webapp/localService/metadata.xml` (generated from the CD
 
 ## Install the backend (ADT)
 
-**Via abapGit (recommended):** `backend/src/` is a flat, abapGit-managed folder (one file per
-object, `.abapgit.xml` included). In ADT's abapGit client, link this repository to a new or
-existing package and set **Starting folder** to `/backend/src/`, then pull. All 62 objects come in
-at once, already in dependency order (abapGit resolves that itself).
+**Via abapGit (recommended):** the repository root is a flat, abapGit-managed folder — one file
+per object, `.abapgit.xml` included, `FOLDER_LOGIC=PREFIX`. In ADT's abapGit client, link this
+repository to a new or existing package, choose **PREFIX** folder logic when asked, and pull (no
+"Starting folder" needed — objects sit directly at the repo root; `app/`, `docs/`, `tools/` and the
+top-level `.md` files are non-ABAP content abapGit ignores). All 62 objects come in at once,
+already in dependency order (abapGit resolves that itself).
 
 > abapGit does **not** pull the shared Gemini client (`ZCX_CC_ERROR`, `ZCL_CC_JSON`,
 > `ZCL_CC_GEMINI_CLIENT`) — those live in the sibling `ABAP_CLEAN_CORE_ANALYSIS` package/repo.
@@ -112,7 +114,7 @@ at once, already in dependency order (abapGit resolves that itself).
 editor the content goes into. Create them in this order:
 
 1. **Shared client** — see [docs/setup.md §0](docs/setup.md)
-2. **Tables** — `backend/src/*.tabl.asddls` (`ZTCFO_CONFIG`, `_PLANFLOW`, `_CRIT`, `_DEMO_ITEM`, `_DEMO_MISC`, `_BRIEF`, `_RUNWAY`, `_RISK`, `_TRADEOFF`, `_ACTION`)
+2. **Tables** — `*.tabl.asddls` at the repo root (`ZTCFO_CONFIG`, `_PLANFLOW`, `_CRIT`, `_DEMO_ITEM`, `_DEMO_MISC`, `_BRIEF`, `_RUNWAY`, `_RISK`, `_TRADEOFF`, `_ACTION`)
 3. **Types and helpers** — `ZIF_CFO_TYPES`, `ZCL_CFO_CALENDAR`, `ZCL_CFO_FORMAT`
 4. **Source views** — `ZI_CFO_OpenItem`, `ZI_CFO_ClearingHist`, `ZI_CFO_PoSpend` (check the field list in [docs/data-sources.md](docs/data-sources.md))
 5. **Data access** — `ZIF_CFO_DATA_SOURCE`, `ZCL_CFO_SOURCE_DEMO`, `ZCL_CFO_SOURCE_LIVE`, `ZCL_CFO_DATA_LOADER`, `ZCL_CFO_DEMO_SEED`
@@ -131,7 +133,7 @@ editor the content goes into. Create them in this order:
 
 | Path | Content |
 |---|---|
-| `backend/src/` | one flat abapGit-managed folder — tables (`*.tabl.asddls`), source and BO CDS views (`*.ddls.asddls`), access control (`*.dcls.asdcls`), behavior definitions and pool (`*.bdef.asbdef`, `*.clas.abap`), engine/AI/drafts/mail/seed classes (`*.clas.abap`), service definition (`*.srvd.srvdsrv`), application job (`*.clas.abap`) — plus `.abapgit.xml` |
+| `/` (repo root) | one flat abapGit-managed folder — tables (`*.tabl.asddls`), source and BO CDS views (`*.ddls.asddls`), access control (`*.dcls.asdcls`), behavior definitions and pool (`*.bdef.asbdef`, `*.clas.abap`), engine/AI/drafts/mail/seed classes (`*.clas.abap`), service definition (`*.srvd.srvdsrv`), application job (`*.clas.abap`) — plus `.abapgit.xml` |
 | `app/cfobrief/webapp` | UI5 app: `view/Cockpit`, `view/Inbox`, `fragment/ActionDraft`, `model/BriefService` |
 | `app/cfobrief/mock` | JS twin of the engine, mock data and action handlers |
 | `app/cfobrief/test` | engine tests (Node test runner) |
