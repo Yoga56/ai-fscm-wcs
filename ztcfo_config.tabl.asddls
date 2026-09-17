@@ -45,7 +45,7 @@ define table ztcfo_config {
   destination               : abap.char(200);    // BTP destination (SAP BTP ABAP Environment only)
   comm_scenario             : abap.char(30);     // communication arrangement scenario (S/4HANA Cloud)
   comm_service              : abap.char(30);     // its outbound service id
-  model                     : abap.char(60);     // default gemini-2.5-pro
+  models                    : abap.char(200);    // comma-separated fallback chain, tried in order
   ai_api_key                : abap.char(200);    // Google AI Studio key. Custom scenarios have no
                                                   // platform-level header injection, so the client
                                                   // sends this as x-goog-api-key itself. Restrict

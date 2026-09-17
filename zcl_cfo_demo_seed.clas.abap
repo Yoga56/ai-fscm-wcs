@@ -178,7 +178,7 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
       INTO @DATA(ls_existing).
     IF sy-subrc = 0.
       ls_rows-config-destination     = ls_existing-destination.
-      ls_rows-config-model           = ls_existing-model.
+      ls_rows-config-models          = ls_existing-models.
       IF ls_existing-comm_scenario IS NOT INITIAL.
         ls_rows-config-comm_scenario = ls_existing-comm_scenario.
       ENDIF.
@@ -357,7 +357,7 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
       destination           = 'GEMINI_AI'
       comm_scenario         = 'ZCA_CCORE_OUT'
       comm_service          = 'ZCA_CCORE_REST'
-      model                 = 'gemini-2.5-pro' ).
+      models                = 'gemini-3.8-flash,gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash' ).
   ENDMETHOD.
 
 
