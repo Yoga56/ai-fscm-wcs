@@ -28,8 +28,9 @@ CLASS zcl_cfo_gemini_adapter IMPLEMENTATION.
     IF lv_model IS INITIAL.
       lv_model = zcl_cfo_gemini_client=>c_default_model.
     ENDIF.
-    mo_client = NEW #( iv_destination = lv_destination
-                       iv_model       = lv_model ).
+    mo_client = NEW #( iv_destination      = lv_destination
+                       iv_model            = lv_model
+                       iv_service_instance = condense( CONV string( is_config-dest_instance ) ) ).
   ENDMETHOD.
 
 

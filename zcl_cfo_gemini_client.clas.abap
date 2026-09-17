@@ -27,7 +27,10 @@ CLASS zcl_cfo_gemini_client DEFINITION
                 iv_path_prefix TYPE string DEFAULT c_default_path
                 iv_mode        TYPE string DEFAULT `DEST`
                 iv_base_url    TYPE string OPTIONAL
-                iv_api_key     TYPE string OPTIONAL.
+                iv_api_key     TYPE string OPTIONAL
+                "! S/4HANA Cloud: Service Instance Name of the SAP_COM_0276 arrangement.
+                "! Leave empty on SAP BTP ABAP environment.
+                iv_service_instance TYPE string OPTIONAL.
 
     "! Sends one generateContent request and returns the model's answer text.
     METHODS generate
@@ -47,6 +50,7 @@ CLASS zcl_cfo_gemini_client DEFINITION
     DATA mv_mode        TYPE string.
     DATA mv_base_url    TYPE string.
     DATA mv_api_key     TYPE string.
+    DATA mv_instance    TYPE string.
 
     METHODS destination
       RETURNING VALUE(ro_destination) TYPE REF TO if_http_destination
@@ -75,6 +79,7 @@ CLASS zcl_cfo_gemini_client IMPLEMENTATION.
     mv_mode        = iv_mode.
     mv_base_url    = iv_base_url.
     mv_api_key     = iv_api_key.
+    mv_instance    = iv_service_instance.
   ENDMETHOD.
 
 
@@ -91,14 +96,19 @@ CLASS zcl_cfo_gemini_client IMPLEMENTATION.
             zcx_cfo_error=>raise( `URL mode requires a base URL` ).
           ENDIF.
           ro_destination = cl_http_destination_provider=>create_by_url( i_url = mv_base_url ).
-        ELSE.
+        ELSEIF mv_instance IS INITIAL.
           ro_destination = cl_http_destination_provider=>create_by_cloud_destination(
                              i_name = CONV #( mv_destination ) ).
+        ELSE.
+          ro_destination = cl_http_destination_provider=>create_by_cloud_destination(
+                             i_name                  = CONV #( mv_destination )
+                             i_service_instance_name = CONV #( mv_instance ) ).
         ENDIF.
 
       CATCH cx_http_dest_provider_error INTO DATA(lx_dest).
         zcx_cfo_error=>raise(
-          text     = |Destination { mv_destination } cannot be resolved: { lx_dest->get_text( ) }|
+          text     = |Destination { mv_destination } (service instance '{ mv_instance }') | &&
+                     |cannot be resolved: { lx_dest->get_text( ) }|
           previous = lx_dest ).
     ENDTRY.
 
