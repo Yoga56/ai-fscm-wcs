@@ -164,7 +164,7 @@ CLASS zcl_cfo_risk_ranker IMPLEMENTATION.
       <ls_risk>-score = round( val = <ls_risk>-exposure * <ls_risk>-probability * <ls_risk>-floor_weight dec = 2 ).
     ENDLOOP.
 
-    SORT rt_risks BY score DESCENDING STABLE.
+    SORT rt_risks STABLE BY score DESCENDING.
 
     LOOP AT rt_risks ASSIGNING <ls_risk>.
       <ls_risk>-risk_rank   = sy-tabix.

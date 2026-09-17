@@ -1117,9 +1117,11 @@ CLASS lhc_actiondraft DEFINITION INHERITING FROM cl_abap_behavior_handler.
            END OF ty_outcome,
            tt_outcome TYPE STANDARD TABLE OF ty_outcome WITH EMPTY KEY.
 
+    TYPES tt_decision_keys TYPE TABLE FOR ACTION IMPORT zr_cfo_brief\\ActionDraft~approve.
+
     "! Shared by approve and reject: checks, updates, and returns one outcome per key.
     METHODS decide
-      IMPORTING it_keys            TYPE TABLE FOR ACTION IMPORT zr_cfo_brief\\ActionDraft~approve
+      IMPORTING it_keys            TYPE tt_decision_keys
                 iv_status          TYPE clike
       RETURNING VALUE(rt_outcomes) TYPE tt_outcome.
 
@@ -1255,7 +1257,7 @@ CLASS lhc_actiondraft IMPLEMENTATION.
 
 
   METHOD reject.
-    DATA lt_keys TYPE TABLE FOR ACTION IMPORT zr_cfo_brief\\ActionDraft~approve.
+    DATA lt_keys TYPE tt_decision_keys.
     lt_keys = CORRESPONDING #( keys ).
     DATA(lt_outcomes) = decide( it_keys = lt_keys iv_status = zif_cfo_types=>action_status-rejected ).
     LOOP AT lt_outcomes INTO DATA(ls_outcome).

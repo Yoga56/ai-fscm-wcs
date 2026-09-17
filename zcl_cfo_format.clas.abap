@@ -10,13 +10,13 @@ CLASS zcl_cfo_format DEFINITION
 
     "! >= 100 000 -> "$22.0M", below -> "$1,726"
     CLASS-METHODS money
-      IMPORTING iv_amount      TYPE zif_cfo_types=>amount
+      IMPORTING iv_amount      TYPE numeric
                 iv_currency    TYPE clike DEFAULT 'USD'
       RETURNING VALUE(rv_text) TYPE string.
 
     "! "11.9%" (sign is not printed)
     CLASS-METHODS percent
-      IMPORTING iv_value       TYPE decfloat34
+      IMPORTING iv_value       TYPE numeric
       RETURNING VALUE(rv_text) TYPE string.
 
     "! 1 -> "one" ... 10 -> "ten"
@@ -31,7 +31,7 @@ CLASS zcl_cfo_format DEFINITION
 
     "! 4.200 -> "4.2", 2.00 -> "2", 18.385 (max 1) -> "18.4"
     CLASS-METHODS number
-      IMPORTING iv_value        TYPE decfloat34
+      IMPORTING iv_value        TYPE numeric
                 iv_max_decimals TYPE i DEFAULT 3
       RETURNING VALUE(rv_text)  TYPE string.
 
@@ -52,8 +52,9 @@ CLASS zcl_cfo_format IMPLEMENTATION.
     DATA lv_millions TYPE p LENGTH 16 DECIMALS 1.
     DATA lv_whole    TYPE int8.
 
-    DATA(lv_abs)  = abs( iv_amount ).
-    DATA(lv_sign) = COND string( WHEN iv_amount < 0 THEN `-` ELSE `` ).
+    DATA(lv_amount) = CONV decfloat34( iv_amount ).
+    DATA(lv_abs)    = abs( lv_amount ).
+    DATA(lv_sign)   = COND string( WHEN lv_amount < 0 THEN `-` ELSE `` ).
 
     IF lv_abs >= 100000.
       lv_millions = lv_abs / 1000000.
@@ -67,7 +68,7 @@ CLASS zcl_cfo_format IMPLEMENTATION.
 
   METHOD percent.
     DATA lv_value TYPE p LENGTH 16 DECIMALS 1.
-    lv_value = abs( iv_value ).
+    lv_value = abs( CONV decfloat34( iv_value ) ).
     rv_text = |{ lv_value NUMBER = RAW }%|.
   ENDMETHOD.
 
@@ -98,7 +99,7 @@ CLASS zcl_cfo_format IMPLEMENTATION.
 
   METHOD number.
     DATA lv_fixed TYPE p LENGTH 16 DECIMALS 3.
-    lv_fixed = round( val = iv_value dec = iv_max_decimals ).
+    lv_fixed = round( val = CONV decfloat34( iv_value ) dec = iv_max_decimals ).
     rv_text  = |{ lv_fixed NUMBER = RAW }|.
     IF find( val = rv_text sub = `.` ) >= 0.
       rv_text = replace( val = rv_text pcre = `0+$` with = `` ).

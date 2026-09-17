@@ -162,7 +162,7 @@ CLASS zcl_cfo_json IMPLEMENTATION.
 
         ENDWHILE.
 
-      CATCH cx_sxml_error INTO DATA(lx_sxml).
+      CATCH cx_root INTO DATA(lx_sxml).
         zcx_cfo_error=>raise( text     = |Malformed JSON response: { lx_sxml->get_text( ) }|
                               previous = lx_sxml ).
     ENDTRY.

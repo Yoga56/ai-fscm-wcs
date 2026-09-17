@@ -126,7 +126,7 @@ CLASS zcl_cfo_runway IMPLEMENTATION.
         ls_flow-stressed  = xsdbool( ls_beh-p_late >= ls_cfg-stress_threshold OR lv_forced = abap_true ).
 
         IF ls_flow-stressed = abap_true.
-          ls_flow-stress_date = zcl_cfo_calendar=>next_working_day( ls_flow-sched_date + lv_shift ).
+          ls_flow-stress_date = zcl_cfo_calendar=>next_working_day( CONV d( ls_flow-sched_date + lv_shift ) ).
         ELSE.
           ls_flow-stress_date = ls_flow-sched_date.
         ENDIF.
@@ -148,7 +148,7 @@ CLASS zcl_cfo_runway IMPLEMENTATION.
 
         DATA(lv_index) = 0.
         LOOP AT mt_runs INTO DATA(lv_run).
-          IF lv_run + 7 >= ls_item-net_due_date.
+          IF CONV d( lv_run + 7 ) >= ls_item-net_due_date.
             lv_index = sy-tabix.
             EXIT.
           ENDIF.
@@ -163,7 +163,7 @@ CLASS zcl_cfo_runway IMPLEMENTATION.
           ls_flow-sched_date     = ls_flow-run_date.
           ls_flow-in_current_run = xsdbool( lv_index = 1 ).
           IF ls_flow-in_current_run = abap_true AND is_sim-run_delay_days <> 0.
-            ls_flow-sched_date = zcl_cfo_calendar=>next_working_day( ls_flow-run_date + is_sim-run_delay_days ).
+            ls_flow-sched_date = zcl_cfo_calendar=>next_working_day( CONV d( ls_flow-run_date + is_sim-run_delay_days ) ).
           ENDIF.
           ls_flow-stress_date = ls_flow-sched_date.
         ENDIF.
