@@ -2,7 +2,12 @@
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DDLS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <DESCRIPTION>CFO Daily Brief - Runway day</DESCRIPTION>
+   <DDLS>
+    <DDLNAME>ZC_CFO_RUNWAYDAY</DDLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>CFO Daily Brief - Runway day</DDTEXT>
+    <SOURCE_TYPE>P</SOURCE_TYPE>
+   </DDLS>
   </asx:values>
  </asx:abap>
 </abapGit>

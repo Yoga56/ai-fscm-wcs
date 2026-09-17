@@ -2,7 +2,12 @@
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DDLS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <DESCRIPTION>CFO Brief - Cleared invoices with days late</DESCRIPTION>
+   <DDLS>
+    <DDLNAME>ZI_CFO_CLEARINGHIST</DDLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DDTEXT>CFO Brief - Cleared invoices with days late</DDTEXT>
+    <SOURCE_TYPE>W</SOURCE_TYPE>
+   </DDLS>
   </asx:values>
  </asx:abap>
 </abapGit>
