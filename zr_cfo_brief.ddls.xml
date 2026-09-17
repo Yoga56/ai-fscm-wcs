@@ -2,12 +2,7 @@
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_DDLS" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <DD01V>
-    <TYPENAME>ZR_CFO_BRIEF</TYPENAME>
-    <DDLANGUAGE>E</DDLANGUAGE>
-    <DDTEXT>CFO Daily Brief</DDTEXT>
-   </DD01V>
-   <ACCESS_PERMISSIONS>0</ACCESS_PERMISSIONS>
+   <DESCRIPTION>CFO Daily Brief</DESCRIPTION>
   </asx:values>
  </asx:abap>
 </abapGit>

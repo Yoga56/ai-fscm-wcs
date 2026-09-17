@@ -2,12 +2,7 @@
 <abapGit version="v1.0.0" serializer="LCL_OBJECT_BDEF" serializer_version="v1.0.0">
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
-   <DD01V>
-    <TYPENAME>ZC_CFO_BRIEF</TYPENAME>
-    <DDLANGUAGE>E</DDLANGUAGE>
-    <DDTEXT>CFO Daily Brief - behavior projection</DDTEXT>
-   </DD01V>
-   <IMPLEMENTATION_TYPE>M</IMPLEMENTATION_TYPE>
+   <DESCRIPTION>CFO Daily Brief - behavior projection</DESCRIPTION>
   </asx:values>
  </asx:abap>
 </abapGit>
