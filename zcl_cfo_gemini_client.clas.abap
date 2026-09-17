@@ -1,10 +1,16 @@
-"! <p class="shorttext synchronized">Calls Gemini through a BTP destination</p>
+"! <p class="shorttext synchronized">Calls Gemini through a communication arrangement</p>
 "! <p>Outbound communication uses the released ABAP Cloud stack:
 "! CL_HTTP_DESTINATION_PROVIDER + CL_WEB_HTTP_CLIENT_MANAGER. The API key never
-"! lives in ABAP - it is configured on the destination (see docs/setup.md).</p>
-"! <p>Copied from ZCL_CC_GEMINI_CLIENT (Clean Core Analyzer package) so this
-"! repository has no cross-package dependency. Keep the two in sync if either
-"! changes.</p>
+"! lives in ABAP - it is configured on the connection (see docs/setup.md).</p>
+"! <p>Three connection modes. COMM is the default: a communication arrangement,
+"! which is how S/4HANA Cloud (and on-stack ABAP Cloud) do outbound HTTP.
+"! S/4HANA Cloud Public Edition has no BTP destination service, so DEST (a plain
+"! BTP destination) only works on SAP BTP ABAP Environment. URL is for sandbox
+"! testing and keeps the key in ABAP memory - do not ship it.</p>
+"! <p>Loosely copied from ZCL_CC_GEMINI_CLIENT (Clean Core Analyzer package) so
+"! this repository has no cross-package dependency. That package's own client,
+"! ZCL_CA_CC_GEMINI_CLIENT, is the richer reference implementation (config table,
+"! model fallback chain) - this one stays deliberately simpler.</p>
 CLASS zcl_cfo_gemini_client DEFINITION
   PUBLIC
   FINAL
@@ -12,25 +18,33 @@ CLASS zcl_cfo_gemini_client DEFINITION
 
   PUBLIC SECTION.
 
-    CONSTANTS c_default_destination TYPE string VALUE `GEMINI_AI`.
-    CONSTANTS c_default_model       TYPE string VALUE `gemini-2.5-pro`.
-    CONSTANTS c_default_path        TYPE string VALUE `/v1beta`.
+    CONSTANTS c_default_destination   TYPE string VALUE `GEMINI_AI`.
+    CONSTANTS c_default_model         TYPE string VALUE `gemini-2.5-pro`.
+    CONSTANTS c_default_path          TYPE string VALUE `/v1beta`.
+
+    " Reuses the communication arrangement already set up for the Clean Core
+    " Analyzer package (same GEMINI_AI communication system, same endpoint).
+    CONSTANTS c_default_comm_scenario TYPE string VALUE `ZCA_CCORE_OUT`.
+    CONSTANTS c_default_comm_service  TYPE string VALUE `ZCA_CCORE_REST`.
 
     CONSTANTS: BEGIN OF mode,
-                 destination TYPE string VALUE `DEST`,
-                 url         TYPE string VALUE `URL`,
+                 "! Communication arrangement - S/4HANA Cloud, on-stack ABAP Cloud
+                 comm_arrangement TYPE string VALUE `COMM`,
+                 "! BTP destination service - SAP BTP ABAP Environment only
+                 destination      TYPE string VALUE `DEST`,
+                 "! Plain URL - sandbox testing only, puts the key in ABAP memory
+                 url              TYPE string VALUE `URL`,
                END OF mode.
 
     METHODS constructor
-      IMPORTING iv_destination TYPE string DEFAULT c_default_destination
-                iv_model       TYPE string DEFAULT c_default_model
-                iv_path_prefix TYPE string DEFAULT c_default_path
-                iv_mode        TYPE string DEFAULT `DEST`
-                iv_base_url    TYPE string OPTIONAL
-                iv_api_key     TYPE string OPTIONAL
-                "! S/4HANA Cloud: Service Instance Name of the SAP_COM_0276 arrangement.
-                "! Leave empty on SAP BTP ABAP environment.
-                iv_service_instance TYPE string OPTIONAL.
+      IMPORTING iv_mode          TYPE string DEFAULT `COMM`
+                iv_comm_scenario TYPE string DEFAULT c_default_comm_scenario
+                iv_comm_service  TYPE string DEFAULT c_default_comm_service
+                iv_destination   TYPE string DEFAULT c_default_destination
+                iv_model         TYPE string DEFAULT c_default_model
+                iv_path_prefix   TYPE string DEFAULT c_default_path
+                iv_base_url      TYPE string OPTIONAL
+                iv_api_key       TYPE string OPTIONAL.
 
     "! Sends one generateContent request and returns the model's answer text.
     METHODS generate
@@ -44,13 +58,14 @@ CLASS zcl_cfo_gemini_client DEFINITION
 
   PRIVATE SECTION.
 
-    DATA mv_destination TYPE string.
-    DATA mv_model       TYPE string.
-    DATA mv_path_prefix TYPE string.
-    DATA mv_mode        TYPE string.
-    DATA mv_base_url    TYPE string.
-    DATA mv_api_key     TYPE string.
-    DATA mv_instance    TYPE string.
+    DATA mv_mode          TYPE string.
+    DATA mv_comm_scenario TYPE string.
+    DATA mv_comm_service  TYPE string.
+    DATA mv_destination   TYPE string.
+    DATA mv_model         TYPE string.
+    DATA mv_path_prefix   TYPE string.
+    DATA mv_base_url      TYPE string.
+    DATA mv_api_key       TYPE string.
 
     METHODS destination
       RETURNING VALUE(ro_destination) TYPE REF TO if_http_destination
@@ -73,13 +88,14 @@ ENDCLASS.
 CLASS zcl_cfo_gemini_client IMPLEMENTATION.
 
   METHOD constructor.
-    mv_destination = iv_destination.
-    mv_model       = iv_model.
-    mv_path_prefix = iv_path_prefix.
-    mv_mode        = iv_mode.
-    mv_base_url    = iv_base_url.
-    mv_api_key     = iv_api_key.
-    mv_instance    = iv_service_instance.
+    mv_mode          = iv_mode.
+    mv_comm_scenario = iv_comm_scenario.
+    mv_comm_service  = iv_comm_service.
+    mv_destination   = iv_destination.
+    mv_model         = iv_model.
+    mv_path_prefix   = iv_path_prefix.
+    mv_base_url      = iv_base_url.
+    mv_api_key       = iv_api_key.
   ENDMETHOD.
 
 
@@ -90,25 +106,34 @@ CLASS zcl_cfo_gemini_client IMPLEMENTATION.
 
   METHOD destination.
 
+    DATA lv_what TYPE string.
+
     TRY.
-        IF mv_mode = mode-url.
-          IF mv_base_url IS INITIAL.
-            zcx_cfo_error=>raise( `URL mode requires a base URL` ).
-          ENDIF.
-          ro_destination = cl_http_destination_provider=>create_by_url( i_url = mv_base_url ).
-        ELSEIF mv_instance IS INITIAL.
-          ro_destination = cl_http_destination_provider=>create_by_cloud_destination(
-                             i_name = CONV #( mv_destination ) ).
-        ELSE.
-          ro_destination = cl_http_destination_provider=>create_by_cloud_destination(
-                             i_name                  = CONV #( mv_destination )
-                             i_service_instance_name = CONV #( mv_instance ) ).
-        ENDIF.
+        CASE mv_mode.
+
+          WHEN mode-url.
+            lv_what = |URL { mv_base_url }|.
+            IF mv_base_url IS INITIAL.
+              zcx_cfo_error=>raise( `URL mode requires a base URL` ).
+            ENDIF.
+            ro_destination = cl_http_destination_provider=>create_by_url( i_url = mv_base_url ).
+
+          WHEN mode-destination.
+            lv_what = |BTP destination { mv_destination }|.
+            ro_destination = cl_http_destination_provider=>create_by_cloud_destination(
+                               i_name = CONV #( mv_destination ) ).
+
+          WHEN OTHERS.
+            lv_what = |communication arrangement { mv_comm_scenario } / { mv_comm_service }|.
+            ro_destination = cl_http_destination_provider=>create_by_comm_arrangement(
+                               comm_scenario = CONV #( mv_comm_scenario )
+                               service_id    = CONV #( mv_comm_service ) ).
+
+        ENDCASE.
 
       CATCH cx_http_dest_provider_error INTO DATA(lx_dest).
         zcx_cfo_error=>raise(
-          text     = |Destination { mv_destination } (service instance '{ mv_instance }') | &&
-                     |cannot be resolved: { lx_dest->get_text( ) }|
+          text     = |Cannot resolve { lv_what }: { lx_dest->get_text( ) }|
           previous = lx_dest ).
     ENDTRY.
 

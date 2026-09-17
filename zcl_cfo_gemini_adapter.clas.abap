@@ -1,6 +1,8 @@
-"! <p class="shorttext synchronized">CFO Brief - Gemini through the shared BTP destination client</p>
-"! <p>Reuses ZCL_CFO_GEMINI_CLIENT from the Clean Core Analyzer package (same
-"! destination set-up, key never in ABAP). Destination and model come from ZTCFO_CONFIG.</p>
+"! <p class="shorttext synchronized">CFO Brief - Gemini through the shared communication arrangement client</p>
+"! <p>Reuses ZCL_CFO_GEMINI_CLIENT (vendored from the Clean Core Analyzer
+"! package). Model and the communication arrangement to use come from
+"! ZTCFO_CONFIG, defaulting to the arrangement the Clean Core Analyzer already
+"! set up (same GEMINI_AI communication system, same endpoint).</p>
 CLASS zcl_cfo_gemini_adapter DEFINITION
   PUBLIC
   FINAL
@@ -20,17 +22,21 @@ ENDCLASS.
 CLASS zcl_cfo_gemini_adapter IMPLEMENTATION.
 
   METHOD constructor.
-    DATA(lv_destination) = condense( CONV string( is_config-destination ) ).
-    DATA(lv_model)       = condense( CONV string( is_config-model ) ).
-    IF lv_destination IS INITIAL.
-      lv_destination = zcl_cfo_gemini_client=>c_default_destination.
-    ENDIF.
+    DATA(lv_model)         = condense( CONV string( is_config-model ) ).
+    DATA(lv_comm_scenario) = condense( CONV string( is_config-comm_scenario ) ).
+    DATA(lv_comm_service)  = condense( CONV string( is_config-comm_service ) ).
     IF lv_model IS INITIAL.
       lv_model = zcl_cfo_gemini_client=>c_default_model.
     ENDIF.
-    mo_client = NEW #( iv_destination      = lv_destination
-                       iv_model            = lv_model
-                       iv_service_instance = condense( CONV string( is_config-dest_instance ) ) ).
+    IF lv_comm_scenario IS INITIAL.
+      lv_comm_scenario = zcl_cfo_gemini_client=>c_default_comm_scenario.
+    ENDIF.
+    IF lv_comm_service IS INITIAL.
+      lv_comm_service = zcl_cfo_gemini_client=>c_default_comm_service.
+    ENDIF.
+    mo_client = NEW #( iv_comm_scenario = lv_comm_scenario
+                       iv_comm_service  = lv_comm_service
+                       iv_model         = lv_model ).
   ENDMETHOD.
 
 

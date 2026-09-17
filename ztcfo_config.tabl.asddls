@@ -42,8 +42,9 @@ define table ztcfo_config {
   // ---- AI and mail -------------------------------------------------------
   four_eyes                 : abap_boolean;      // author of an action draft may not approve it
   ai_enabled                : abap_boolean;
-  destination               : abap.char(200);    // BTP destination, default GEMINI_AI
-  dest_instance             : abap.char(100);    // S/4HANA Cloud: service instance name of the SAP_COM_0276 arrangement
+  destination               : abap.char(200);    // BTP destination (SAP BTP ABAP Environment only)
+  comm_scenario             : abap.char(30);     // communication arrangement scenario (S/4HANA Cloud)
+  comm_service              : abap.char(30);     // its outbound service id
   model                     : abap.char(60);     // default gemini-2.5-pro
   sender_email              : abap.char(241);
   recipient_email           : abap.char(241);    // CFO - daily brief

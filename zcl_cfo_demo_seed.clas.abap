@@ -179,8 +179,11 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
     IF sy-subrc = 0.
       ls_rows-config-destination     = ls_existing-destination.
       ls_rows-config-model           = ls_existing-model.
-      IF ls_existing-dest_instance IS NOT INITIAL.
-        ls_rows-config-dest_instance = ls_existing-dest_instance.
+      IF ls_existing-comm_scenario IS NOT INITIAL.
+        ls_rows-config-comm_scenario = ls_existing-comm_scenario.
+      ENDIF.
+      IF ls_existing-comm_service IS NOT INITIAL.
+        ls_rows-config-comm_service = ls_existing-comm_service.
       ENDIF.
       ls_rows-config-sender_email    = ls_existing-sender_email.
       ls_rows-config-recipient_email = ls_existing-recipient_email.
@@ -352,7 +355,8 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
       four_eyes             = abap_false
       ai_enabled            = abap_true
       destination           = 'GEMINI_AI'
-      dest_instance         = 'CFO_BRIEF'
+      comm_scenario         = 'ZCA_CCORE_OUT'
+      comm_service          = 'ZCA_CCORE_REST'
       model                 = 'gemini-2.5-pro' ).
   ENDMETHOD.
 
