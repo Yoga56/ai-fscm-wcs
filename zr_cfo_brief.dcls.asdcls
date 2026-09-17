@@ -2,17 +2,17 @@
 @MappingRole: true
 define role ZR_CFO_BRIEF {
   grant select on ZR_CFO_BRIEF
-    where ( CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
+    where ( CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, ZCOCD, ACTVT = '03' );
 
   grant select on ZR_CFO_RUNWAYDAY
-    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
+    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, ZCOCD, ACTVT = '03' );
 
   grant select on ZR_CFO_RISK
-    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
+    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, ZCOCD, ACTVT = '03' );
 
   grant select on ZR_CFO_TRADEOFF
-    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
+    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, ZCOCD, ACTVT = '03' );
 
   grant select on ZR_CFO_ACTIONDRAFT
-    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
+    where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, ZCOCD, ACTVT = '03' );
 }

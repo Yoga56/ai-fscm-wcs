@@ -71,7 +71,7 @@ CLASS lcl_util IMPLEMENTATION.
 
   METHOD authorized.
     AUTHORITY-CHECK OBJECT 'ZCFO_BRF'
-      ID 'BUKRS' FIELD iv_company_code
+      ID 'ZCOCD' FIELD iv_company_code
       ID 'ACTVT' FIELD iv_activity.
     rv_ok = xsdbool( sy-subrc = 0 ).
   ENDMETHOD.
@@ -344,7 +344,7 @@ CLASS lhc_brief IMPLEMENTATION.
   METHOD get_global_authorizations.
     IF requested_authorizations-%action-generateBrief = if_abap_behv=>mk-on.
       AUTHORITY-CHECK OBJECT 'ZCFO_BRF'
-        ID 'BUKRS' DUMMY
+        ID 'ZCOCD' DUMMY
         ID 'ACTVT' FIELD zif_cfo_types=>activity-generate.
       result-%action-generateBrief = lcl_util=>auth( xsdbool( sy-subrc = 0 ) ).
     ENDIF.
@@ -1223,10 +1223,10 @@ CLASS lhc_actiondraft IMPLEMENTATION.
 
     result = VALUE #( FOR ls_after IN lt_after ( %tky = ls_after-%tky %param = CORRESPONDING #( ls_after ) ) ).
 
-    LOOP AT lt_after INTO DATA(ls_after).
-      APPEND VALUE #( %tky = ls_after-%tky
+    LOOP AT lt_after INTO DATA(ls_routed).
+      APPEND VALUE #( %tky = ls_routed-%tky
                       %msg = new_message_with_text( severity = if_abap_behv_message=>severity-success
-                                                    text     = |Routed to { ls_after-RoutedTo }| ) ) TO reported-actiondraft.
+                                                    text     = |Routed to { ls_routed-RoutedTo }| ) ) TO reported-actiondraft.
     ENDLOOP.
 
   ENDMETHOD.
