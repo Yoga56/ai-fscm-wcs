@@ -116,7 +116,7 @@ CLASS zcl_cfo_runway IMPLEMENTATION.
         ENDIF.
 
         DATA(lv_forced) = xsdbool( line_exists( is_sim-late_ids[ table_line = ls_item-doc_id ] ) ).
-        DATA(lv_shift)  = COND i( WHEN lv_forced = abap_true THEN max( ls_beh-mean_late, 1 )
+        DATA(lv_shift)  = COND i( WHEN lv_forced = abap_true THEN nmax( val1 = ls_beh-mean_late val2 = 1 )
                                   ELSE ls_beh-mean_late ).
 
         ls_flow-kind      = zif_cfo_types=>flow_kind-receivable.

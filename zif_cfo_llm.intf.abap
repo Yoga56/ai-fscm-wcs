@@ -8,7 +8,7 @@ INTERFACE zif_cfo_llm PUBLIC.
     IMPORTING iv_system      TYPE string
               iv_prompt      TYPE string
     RETURNING VALUE(rv_text) TYPE string
-    RAISING   zcx_cc_error.
+    RAISING   zcx_cfo_error.
 
   METHODS model
     RETURNING VALUE(rv_model) TYPE string.

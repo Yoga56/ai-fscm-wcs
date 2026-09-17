@@ -45,7 +45,7 @@ CLASS lcl_util DEFINITION FINAL ABSTRACT.
                 es_config       TYPE zif_cfo_types=>ty_config
                 et_risk_uuids   TYPE tt_uuid_map
                 et_advice_uuids TYPE tt_uuid_map
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     CLASS-METHODS brief_create
       IMPORTING is_brief        TYPE zif_cfo_types=>ty_brief
@@ -123,7 +123,7 @@ CLASS lcl_util IMPLEMENTATION.
         RESULT DATA(lt_advice).
 
     IF lt_brief IS INITIAL.
-      zcx_cc_error=>raise( `Brief not found` ).
+      zcx_cfo_error=>raise( `Brief not found` ).
     ENDIF.
 
     es_result-brief = brief_from( lt_brief[ 1 ] ).
@@ -437,7 +437,7 @@ CLASS lhc_brief IMPLEMENTATION.
           ls_input  = NEW zcl_cfo_data_loader( )->load( iv_company_code = lv_company
                                                        iv_key_date     = ls_key-%param-BriefDate ).
           ls_result = NEW zcl_cfo_brief_builder( )->build( ls_input ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %cid = ls_key-%cid %fail-cause = if_abap_behv=>cause-unspecific ) TO failed-brief.
           APPEND VALUE #( %cid = ls_key-%cid
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -633,7 +633,7 @@ CLASS lhc_brief IMPLEMENTATION.
                                         es_config       = ls_config
                                         et_risk_uuids   = lt_risk_ids
                                         et_advice_uuids = lt_adv_ids ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_key-%tky ) TO failed-brief.
           APPEND VALUE #( %tky = ls_key-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -721,7 +721,7 @@ CLASS lhc_brief IMPLEMENTATION.
           DATA(ls_input) = NEW zcl_cfo_data_loader( )->load( iv_company_code = <ls_brief>-CompanyCode
                                                             iv_key_date     = <ls_brief>-BriefDate ).
           DATA(ls_scen)  = NEW zcl_cfo_brief_builder( )->build( is_input = ls_input is_sim = ls_sim ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_key-%tky ) TO failed-brief.
           APPEND VALUE #( %tky = ls_key-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -779,7 +779,7 @@ CLASS lhc_brief IMPLEMENTATION.
           lcl_util=>snapshot( EXPORTING iv_brief_uuid = ls_key-BriefUuid
                               IMPORTING es_result     = ls_result
                                         es_config     = ls_config ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_key-%tky ) TO failed-brief.
           APPEND VALUE #( %tky = ls_key-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -825,7 +825,7 @@ CLASS lhc_brief IMPLEMENTATION.
           lcl_util=>snapshot( EXPORTING iv_brief_uuid = ls_key-BriefUuid
                               IMPORTING es_result     = ls_result
                                         es_config     = ls_config ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_key-%tky ) TO failed-brief.
           APPEND VALUE #( %tky = ls_key-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -930,7 +930,7 @@ CLASS lhc_risk IMPLEMENTATION.
           lcl_util=>snapshot( EXPORTING iv_brief_uuid = ls_row-BriefUuid
                               IMPORTING es_result     = ls_result
                                         es_config     = ls_config ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_row-%tky ) TO failed-risk.
           APPEND VALUE #( %tky = ls_row-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -1034,7 +1034,7 @@ CLASS lhc_tradeoff IMPLEMENTATION.
           lcl_util=>snapshot( EXPORTING iv_brief_uuid = ls_row-BriefUuid
                               IMPORTING es_result     = ls_result
                                         es_config     = ls_config ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_row-%tky ) TO failed-tradeoff.
           APPEND VALUE #( %tky = ls_row-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-error
@@ -1196,7 +1196,7 @@ CLASS lhc_actiondraft IMPLEMENTATION.
         IF sy-subrc = 0.
           TRY.
               lv_to = zcl_cfo_data_loader=>read_config( <ls_brief>-CompanyCode )-approver_email.
-            CATCH zcx_cc_error.
+            CATCH zcx_cfo_error.
               CLEAR lv_to.
           ENDTRY.
         ENDIF.
@@ -1325,7 +1325,7 @@ CLASS lhc_actiondraft IMPLEMENTATION.
                AND <ls_row>-CreatedBy = lv_user.
               lv_problem = `Four-eyes principle: the author of a draft cannot decide on it`.
             ENDIF.
-          CATCH zcx_cc_error INTO DATA(lx_error).
+          CATCH zcx_cfo_error INTO DATA(lx_error).
             lv_problem = lx_error->text.
         ENDTRY.
       ENDIF.
@@ -1390,7 +1390,7 @@ CLASS lsc_zr_cfo_brief IMPLEMENTATION.
             iv_body     = ls_action-Body
             iv_note     = ls_action-InternalNote
             iv_author   = ls_action-CreatedBy ).
-        CATCH zcx_cc_error INTO DATA(lx_error).
+        CATCH zcx_cfo_error INTO DATA(lx_error).
           APPEND VALUE #( %tky = ls_action-%tky
                           %msg = new_message_with_text( severity = if_abap_behv_message=>severity-warning
                                                         text     = |Routed, but no e-mail sent: { lx_error->text }| ) )

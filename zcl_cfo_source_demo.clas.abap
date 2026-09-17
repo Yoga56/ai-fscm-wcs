@@ -18,7 +18,7 @@ CLASS zcl_cfo_source_demo IMPLEMENTATION.
         AND record_type  = 'BANK'
       INTO @DATA(lv_amount).
     IF sy-subrc <> 0.
-      zcx_cc_error=>raise( |No demo bank balance for company code { is_config-company_code } - run ZCL_CFO_DEMO_SEED| ).
+      zcx_cfo_error=>raise( |No demo bank balance for company code { is_config-company_code } - run ZCL_CFO_DEMO_SEED| ).
     ENDIF.
     rv_amount = lv_amount.
   ENDMETHOD.

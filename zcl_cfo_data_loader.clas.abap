@@ -11,7 +11,7 @@ CLASS zcl_cfo_data_loader DEFINITION
     CLASS-METHODS read_config
       IMPORTING iv_company_code  TYPE clike
       RETURNING VALUE(rs_config) TYPE zif_cfo_types=>ty_config
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     "! Replace the data source (tier-2 wrapper, tests). Pass nothing to reset.
     CLASS-METHODS set_source
@@ -22,7 +22,7 @@ CLASS zcl_cfo_data_loader DEFINITION
       IMPORTING iv_company_code TYPE clike
                 iv_key_date     TYPE d OPTIONAL
       RETURNING VALUE(rs_input) TYPE zif_cfo_types=>ty_input
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
   PRIVATE SECTION.
 
@@ -42,11 +42,11 @@ CLASS zcl_cfo_data_loader IMPLEMENTATION.
       WHERE company_code = @iv_company_code
       INTO @rs_config.
     IF sy-subrc <> 0.
-      zcx_cc_error=>raise( |Company code { iv_company_code } is not configured in ZTCFO_CONFIG | &&
+      zcx_cfo_error=>raise( |Company code { iv_company_code } is not configured in ZTCFO_CONFIG | &&
                            |(run ZCL_CFO_DEMO_SEED for the demo)| ).
     ENDIF.
     IF rs_config-currency IS INITIAL OR rs_config-horizon_days <= 0.
-      zcx_cc_error=>raise( |Configuration for company code { iv_company_code } is incomplete| ).
+      zcx_cfo_error=>raise( |Configuration for company code { iv_company_code } is incomplete| ).
     ENDIF.
   ENDMETHOD.
 

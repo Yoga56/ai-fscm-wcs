@@ -33,7 +33,7 @@ CLASS zcl_cfo_risk_ranker IMPLEMENTATION.
     DATA(lv_key)      = is_input-key_date.
     DATA(lv_cur)      = ls_cfg-currency.
     DATA(ls_low)      = zcl_cfo_runway=>low( it_days ).
-    DATA(lv_low_date) = lv_key + ls_low-day_index.
+    DATA(lv_low_date) = CONV d( lv_key + ls_low-day_index ).
 
     " ---- receivables likely to be late -----------------------------------
     DATA(lv_funds_by)  = zcl_cfo_calendar=>add_working_days( iv_date = lv_low_date

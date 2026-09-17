@@ -13,7 +13,7 @@ CLASS zcl_cfo_brief_builder DEFINITION
       IMPORTING is_input         TYPE zif_cfo_types=>ty_input
                 is_sim           TYPE zif_cfo_types=>ty_sim OPTIONAL
       RETURNING VALUE(rs_result) TYPE zif_cfo_types=>ty_result
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
 ENDCLASS.
 
@@ -30,7 +30,7 @@ CLASS zcl_cfo_brief_builder IMPLEMENTATION.
     DATA(lv_cur) = ls_cfg-currency.
 
     IF ls_cfg-horizon_days <= 0 OR ls_cfg-run_weekday NOT BETWEEN 1 AND 7.
-      zcx_cc_error=>raise( |Configuration for company code { ls_cfg-company_code } is incomplete (horizon / run weekday)| ).
+      zcx_cfo_error=>raise( |Configuration for company code { ls_cfg-company_code } is incomplete (horizon / run weekday)| ).
     ENDIF.
 
     DATA(lv_floor) = COND zif_cfo_types=>amount( WHEN is_sim-floor_override > 0 THEN is_sim-floor_override

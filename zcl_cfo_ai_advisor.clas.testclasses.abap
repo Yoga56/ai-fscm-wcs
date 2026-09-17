@@ -12,7 +12,7 @@ CLASS ltd_llm IMPLEMENTATION.
   METHOD zif_cfo_llm~generate.
     last_prompt = iv_prompt.
     IF fail = abap_true.
-      zcx_cc_error=>raise( `Destination GEMINI_AI cannot be resolved` ).
+      zcx_cfo_error=>raise( `Destination GEMINI_AI cannot be resolved` ).
     ENDIF.
     rv_text = answer.
   ENDMETHOD.
@@ -50,7 +50,7 @@ CLASS ltcl_advisor IMPLEMENTATION.
     ls_input-config-ai_enabled = abap_true.
     TRY.
         ms_result = NEW zcl_cfo_brief_builder( )->build( ls_input ).
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         cl_abap_unit_assert=>fail( lx_error->text ).
     ENDTRY.
     mo_llm = NEW #( ).

@@ -26,7 +26,7 @@ CLASS zcl_cfo_source_live IMPLEMENTATION.
   METHOD zif_cfo_data_source~bank_balance.
 
     IF is_config-bank_gl_from IS INITIAL.
-      zcx_cc_error=>raise( |Bank G/L range not configured for company code { is_config-company_code }| ).
+      zcx_cfo_error=>raise( |Bank G/L range not configured for company code { is_config-company_code }| ).
     ENDIF.
 
     DATA(lv_to) = COND #( WHEN is_config-bank_gl_to IS INITIAL THEN is_config-bank_gl_from

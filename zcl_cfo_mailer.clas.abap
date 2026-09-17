@@ -12,7 +12,7 @@ CLASS zcl_cfo_mailer DEFINITION
     "! The 08:00 brief to the configured recipient.
     CLASS-METHODS send_brief
       IMPORTING iv_brief_uuid TYPE sysuuid_x16
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     "! "Please approve" mail when an action draft is routed.
     CLASS-METHODS send_approval_request
@@ -23,7 +23,7 @@ CLASS zcl_cfo_mailer DEFINITION
                 iv_body     TYPE clike
                 iv_note     TYPE clike OPTIONAL
                 iv_author   TYPE clike OPTIONAL
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     "! HTML of the daily brief (also used by the smoke test for a preview).
     CLASS-METHODS brief_html
@@ -31,7 +31,7 @@ CLASS zcl_cfo_mailer DEFINITION
       EXPORTING ev_subject     TYPE string
                 es_config      TYPE zif_cfo_types=>ty_config
       RETURNING VALUE(rv_html) TYPE string
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     CLASS-METHODS html
       IMPORTING iv_text        TYPE clike
@@ -49,7 +49,7 @@ CLASS zcl_cfo_mailer DEFINITION
                 iv_recipient TYPE clike
                 iv_subject   TYPE clike
                 iv_html      TYPE string
-      RAISING   zcx_cc_error.
+      RAISING   zcx_cfo_error.
 
     CLASS-METHODS section
       IMPORTING iv_title       TYPE clike
@@ -76,7 +76,7 @@ CLASS zcl_cfo_mailer IMPLEMENTATION.
                                 IMPORTING ev_subject    = lv_subject
                                           es_config     = ls_config ).
     IF ls_config-recipient_email IS INITIAL.
-      zcx_cc_error=>raise( |No recipient e-mail configured for company code { ls_config-company_code }| ).
+      zcx_cfo_error=>raise( |No recipient e-mail configured for company code { ls_config-company_code }| ).
     ENDIF.
     send( iv_sender    = ls_config-sender_email
           iv_recipient = ls_config-recipient_email
@@ -87,7 +87,7 @@ CLASS zcl_cfo_mailer IMPLEMENTATION.
 
   METHOD send_approval_request.
     IF is_config-approver_email IS INITIAL.
-      zcx_cc_error=>raise( |No approver e-mail configured for company code { is_config-company_code }| ).
+      zcx_cfo_error=>raise( |No approver e-mail configured for company code { is_config-company_code }| ).
     ENDIF.
 
     DATA(lv_html) =
@@ -115,7 +115,7 @@ CLASS zcl_cfo_mailer IMPLEMENTATION.
       WHERE brief_uuid = @iv_brief_uuid
       INTO @DATA(ls_b).
     IF sy-subrc <> 0.
-      zcx_cc_error=>raise( `Brief not found` ).
+      zcx_cfo_error=>raise( `Brief not found` ).
     ENDIF.
 
     es_config = zcl_cfo_data_loader=>read_config( ls_b-company_code ).
@@ -208,7 +208,7 @@ CLASS zcl_cfo_mailer IMPLEMENTATION.
   METHOD send.
 
     IF iv_recipient IS INITIAL.
-      zcx_cc_error=>raise( `No recipient` ).
+      zcx_cfo_error=>raise( `No recipient` ).
     ENDIF.
 
     TRY.
@@ -228,7 +228,7 @@ CLASS zcl_cfo_mailer IMPLEMENTATION.
         lo_mail->send( ).
 
       CATCH cx_bcs_mail INTO DATA(lx_mail).
-        zcx_cc_error=>raise( text = |E-mail could not be sent: { lx_mail->get_text( ) }| previous = lx_mail ).
+        zcx_cfo_error=>raise( text = |E-mail could not be sent: { lx_mail->get_text( ) }| previous = lx_mail ).
     ENDTRY.
 
   ENDMETHOD.

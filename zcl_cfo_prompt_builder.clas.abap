@@ -167,7 +167,7 @@ CLASS zcl_cfo_prompt_builder IMPLEMENTATION.
     rv_text =
       |Answer the CFO's question using only these facts.{ cl_abap_char_utilities=>newline }| &&
       |FACTS: { iv_facts }{ cl_abap_char_utilities=>newline }| &&
-      |QUESTION: { zcl_cc_json=>escape( mo_pseudo->mask( iv_question ) ) }{ cl_abap_char_utilities=>newline }| &&
+      |QUESTION: { zcl_cfo_json=>escape( mo_pseudo->mask( iv_question ) ) }{ cl_abap_char_utilities=>newline }| &&
       |If the question needs a new calculation (a what-if), do not compute it: say which What-if toggle | &&
       |answers it (customer pays late, hold a supplier, factor a receivable, delay the run, change the floor). | &&
       |If the facts do not contain the answer, say so. | &&
@@ -187,7 +187,7 @@ CLASS zcl_cfo_prompt_builder IMPLEMENTATION.
 
 
   METHOD str.
-    rv_json = |"{ zcl_cc_json=>escape( mo_pseudo->mask( iv_text ) ) }"|.
+    rv_json = |"{ zcl_cfo_json=>escape( mo_pseudo->mask( iv_text ) ) }"|.
   ENDMETHOD.
 
 

@@ -215,7 +215,7 @@ CLASS zcl_cfo_tradeoff IMPLEMENTATION.
       ls_advice-pay_partner = ls_protected-flow-partner_name.
       ls_advice-pay_amount = ls_protected-amount.
       ls_advice-pay_note   = |{ condense( CONV string( ls_protected-crit-note ) ) }; | &&
-                             |{ money( ls_protected-crit-revenue_at_risk ) } of orders this quarter on | &&
+                             |{ money( CONV zif_cfo_types=>amount( ls_protected-crit-revenue_at_risk ) ) } of orders this quarter on | &&
                              |{ condense( CONV string( ls_protected-crit-prod_line ) ) }|.
       ls_advice-recommendation =
         |Pay { COND string( WHEN find( val = to_lower( ls_protected-flow-item_text ) sub = `raw` ) >= 0
@@ -289,7 +289,7 @@ CLASS zcl_cfo_tradeoff IMPLEMENTATION.
     DATA(ls_cfg)      = ms_input-config.
     DATA(lv_key)      = ms_input-key_date.
     DATA(ls_low)      = zcl_cfo_runway=>low( it_days ).
-    DATA(lv_start)    = zcl_cfo_calendar=>next_working_day( lv_key + ls_low-day_index + 1 ).
+    DATA(lv_start)    = zcl_cfo_calendar=>next_working_day( CONV d( lv_key + ls_low-day_index + 1 ) ).
     DATA(lv_from)     = CONV i( lv_start - lv_key ).
     DATA(lv_to)       = lv_from + ls_cfg-deposit_days - 1.
 

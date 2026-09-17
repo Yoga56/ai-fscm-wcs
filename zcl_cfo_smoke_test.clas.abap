@@ -25,7 +25,7 @@ CLASS zcl_cfo_smoke_test IMPLEMENTATION.
     TRY.
         print( is_result = NEW zcl_cfo_brief_builder( )->build( zcl_cfo_demo_seed=>scenario( ) )
                io_out    = out ).
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         out->write( |FAILED: { lx_error->text }| ).
         RETURN.
     ENDTRY.
@@ -41,7 +41,7 @@ CLASS zcl_cfo_smoke_test IMPLEMENTATION.
         IF ls_result-brief-error_text IS NOT INITIAL.
           out->write( |Warning       : { ls_result-brief-error_text }| ).
         ENDIF.
-      CATCH zcx_cc_error INTO lx_error.
+      CATCH zcx_cfo_error INTO lx_error.
         out->write( |Skipped: { lx_error->text }| ).
     ENDTRY.
 

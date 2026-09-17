@@ -46,11 +46,11 @@ CLASS zcl_cfo_ai_advisor DEFINITION
     METHODS ask
       IMPORTING iv_prompt       TYPE string
                 io_guard        TYPE REF TO zcl_cfo_fact_guard
-      RETURNING VALUE(rt_nodes) TYPE zcl_cc_json=>ty_nodes
-      RAISING   zcx_cc_error.
+      RETURNING VALUE(rt_nodes) TYPE zcl_cfo_json=>ty_nodes
+      RAISING   zcx_cfo_error.
 
     METHODS check_enabled
-      RAISING zcx_cc_error.
+      RAISING zcx_cfo_error.
 
 ENDCLASS.
 
@@ -68,7 +68,7 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
 
   METHOD check_enabled.
     IF ms_config-ai_enabled = abap_false OR mo_llm IS NOT BOUND.
-      zcx_cc_error=>raise( `AI is switched off in ZTCFO_CONFIG - rule-based text shown` ).
+      zcx_cfo_error=>raise( `AI is switched off in ZTCFO_CONFIG - rule-based text shown` ).
     ENDIF.
   ENDMETHOD.
 
@@ -76,16 +76,16 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
   METHOD ask.
     DATA(lv_answer) = mo_llm->generate( iv_system = zcl_cfo_prompt_builder=>system_instruction( )
                                         iv_prompt = iv_prompt ).
-    rt_nodes = zcl_cc_json=>parse( lv_answer ).
+    rt_nodes = zcl_cfo_json=>parse( lv_answer ).
     IF rt_nodes IS INITIAL.
-      zcx_cc_error=>raise( `The model answer could not be parsed as JSON` ).
+      zcx_cfo_error=>raise( `The model answer could not be parsed as JSON` ).
     ENDIF.
 
     " every string the model wrote has to stick to the facts
     LOOP AT rt_nodes INTO DATA(ls_node) WHERE kind = `str`.
       DATA(lv_bad) = io_guard->unsupported( ls_node-value ).
       IF lv_bad IS NOT INITIAL.
-        zcx_cc_error=>raise( |The model quoted { lv_bad }, which is not in the facts - rule-based text kept| ).
+        zcx_cfo_error=>raise( |The model quoted { lv_bad }, which is not in the facts - rule-based text kept| ).
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
@@ -108,10 +108,10 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         DATA(lo_guard)   = NEW zcl_cfo_fact_guard( lv_facts ).
         DATA(lt_nodes)   = ask( iv_prompt = lo_builder->brief_prompt( lv_facts ) io_guard = lo_guard ).
 
-        DATA(lv_headline)  = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = `headline` ).
-        DATA(lv_narrative) = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = `narrative` ).
+        DATA(lv_headline)  = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = `headline` ).
+        DATA(lv_narrative) = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = `narrative` ).
         IF lv_headline IS INITIAL OR lv_narrative IS INITIAL.
-          zcx_cc_error=>raise( `The model answer had no headline or narrative - rule-based text kept` ).
+          zcx_cfo_error=>raise( `The model answer had no headline or narrative - rule-based text kept` ).
         ENDIF.
 
         lv_headline = lo_pseudo->unmask( lv_headline ).
@@ -122,10 +122,10 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         cs_result-brief-narrative = lo_pseudo->unmask( lv_narrative ).
 
         lv_i     = 0.
-        lv_count = zcl_cc_json=>count( it_nodes = lt_nodes iv_path = `riskNotes` ).
+        lv_count = zcl_cfo_json=>count( it_nodes = lt_nodes iv_path = `riskNotes` ).
         DO lv_count TIMES.
-          DATA(lv_id)   = to_upper( zcl_cc_json=>value( it_nodes = lt_nodes iv_path = |riskNotes[{ lv_i }].id| ) ).
-          DATA(lv_note) = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = |riskNotes[{ lv_i }].note| ).
+          DATA(lv_id)   = to_upper( zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = |riskNotes[{ lv_i }].id| ) ).
+          DATA(lv_note) = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = |riskNotes[{ lv_i }].note| ).
           ASSIGN cs_result-risks[ risk_id = lv_id ] TO FIELD-SYMBOL(<ls_risk>).
           IF sy-subrc = 0.
             <ls_risk>-ai_note = lo_pseudo->unmask( lv_note ).
@@ -135,10 +135,10 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         ENDDO.
 
         lv_i     = 0.
-        lv_count = zcl_cc_json=>count( it_nodes = lt_nodes iv_path = `adviceNotes` ).
+        lv_count = zcl_cfo_json=>count( it_nodes = lt_nodes iv_path = `adviceNotes` ).
         DO lv_count TIMES.
-          lv_id   = to_upper( zcl_cc_json=>value( it_nodes = lt_nodes iv_path = |adviceNotes[{ lv_i }].id| ) ).
-          lv_note = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = |adviceNotes[{ lv_i }].note| ).
+          lv_id   = to_upper( zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = |adviceNotes[{ lv_i }].id| ) ).
+          lv_note = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = |adviceNotes[{ lv_i }].note| ).
           ASSIGN cs_result-advice[ advice_id = lv_id ] TO FIELD-SYMBOL(<ls_advice>).
           IF sy-subrc = 0.
             <ls_advice>-ai_note = lo_pseudo->unmask( lv_note ).
@@ -150,7 +150,7 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         cs_result-brief-engine     = zif_cfo_types=>engine-hybrid.
         cs_result-brief-model_used = mo_llm->model( ).
 
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         cs_result-brief-error_text = lx_error->text.
     ENDTRY.
 
@@ -171,15 +171,15 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         DATA(lt_nodes)   = ask( iv_prompt = lo_builder->copilot_prompt( iv_facts = lv_facts iv_question = iv_question )
                                 io_guard  = lo_guard ).
 
-        rs_answer-answer = lo_pseudo->unmask( zcl_cc_json=>value( it_nodes = lt_nodes iv_path = `answer` ) ).
+        rs_answer-answer = lo_pseudo->unmask( zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = `answer` ) ).
         IF rs_answer-answer IS INITIAL.
-          zcx_cc_error=>raise( `The model returned no answer` ).
+          zcx_cfo_error=>raise( `The model returned no answer` ).
         ENDIF.
 
         DATA(lv_i)     = 0.
-        DATA(lv_count) = zcl_cc_json=>count( it_nodes = lt_nodes iv_path = `followUps` ).
+        DATA(lv_count) = zcl_cfo_json=>count( it_nodes = lt_nodes iv_path = `followUps` ).
         DO lv_count TIMES.
-          DATA(lv_follow) = lo_pseudo->unmask( zcl_cc_json=>value( it_nodes = lt_nodes iv_path = |followUps[{ lv_i }]| ) ).
+          DATA(lv_follow) = lo_pseudo->unmask( zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = |followUps[{ lv_i }]| ) ).
           rs_answer-follow_ups = COND #( WHEN rs_answer-follow_ups IS INITIAL THEN lv_follow
                                          ELSE rs_answer-follow_ups && cl_abap_char_utilities=>newline && lv_follow ).
           lv_i += 1.
@@ -188,7 +188,7 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         rs_answer-engine     = zif_cfo_types=>engine-hybrid.
         rs_answer-model_used = mo_llm->model( ).
 
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         rs_answer-error_text = lx_error->text.
         rs_answer-answer     = |The assistant is not available ({ lx_error->text }). | &&
                                |From today's brief: { is_result-brief-narrative }|.
@@ -212,8 +212,8 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         DATA(lt_nodes)   = ask( iv_prompt = lo_builder->draft_prompt( iv_facts = lv_facts is_draft = cs_draft )
                                 io_guard  = lo_guard ).
 
-        DATA(lv_subject) = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = `subject` ).
-        DATA(lv_body)    = zcl_cc_json=>value( it_nodes = lt_nodes iv_path = `body` ).
+        DATA(lv_subject) = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = `subject` ).
+        DATA(lv_body)    = zcl_cfo_json=>value( it_nodes = lt_nodes iv_path = `body` ).
         IF lv_subject IS INITIAL OR lv_body IS INITIAL.
           RETURN.
         ENDIF.
@@ -222,7 +222,7 @@ CLASS zcl_cfo_ai_advisor IMPLEMENTATION.
         cs_draft-body    = lo_pseudo->unmask( lv_body ).
         cs_draft-engine  = zif_cfo_types=>engine-hybrid.
 
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         cs_draft-internal_note = COND #( WHEN cs_draft-internal_note IS INITIAL
                                          THEN |Template text ({ lx_error->text })|
                                          ELSE |{ cs_draft-internal_note } - template text ({ lx_error->text })| ).

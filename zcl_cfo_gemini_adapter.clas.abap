@@ -1,5 +1,5 @@
 "! <p class="shorttext synchronized">CFO Brief - Gemini through the shared BTP destination client</p>
-"! <p>Reuses ZCL_CC_GEMINI_CLIENT from the Clean Core Analyzer package (same
+"! <p>Reuses ZCL_CFO_GEMINI_CLIENT from the Clean Core Analyzer package (same
 "! destination set-up, key never in ABAP). Destination and model come from ZTCFO_CONFIG.</p>
 CLASS zcl_cfo_gemini_adapter DEFINITION
   PUBLIC
@@ -13,7 +13,7 @@ CLASS zcl_cfo_gemini_adapter DEFINITION
       IMPORTING is_config TYPE zif_cfo_types=>ty_config.
 
   PRIVATE SECTION.
-    DATA mo_client TYPE REF TO zcl_cc_gemini_client.
+    DATA mo_client TYPE REF TO zcl_cfo_gemini_client.
 ENDCLASS.
 
 
@@ -23,10 +23,10 @@ CLASS zcl_cfo_gemini_adapter IMPLEMENTATION.
     DATA(lv_destination) = condense( CONV string( is_config-destination ) ).
     DATA(lv_model)       = condense( CONV string( is_config-model ) ).
     IF lv_destination IS INITIAL.
-      lv_destination = zcl_cc_gemini_client=>c_default_destination.
+      lv_destination = zcl_cfo_gemini_client=>c_default_destination.
     ENDIF.
     IF lv_model IS INITIAL.
-      lv_model = zcl_cc_gemini_client=>c_default_model.
+      lv_model = zcl_cfo_gemini_client=>c_default_model.
     ENDIF.
     mo_client = NEW #( iv_destination = lv_destination
                        iv_model       = lv_model ).

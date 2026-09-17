@@ -36,7 +36,7 @@ CLASS ltcl_builder IMPLEMENTATION.
   METHOD class_setup.
     TRY.
         gs_base = NEW zcl_cfo_brief_builder( )->build( zcl_cfo_demo_seed=>scenario( ) ).
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         cl_abap_unit_assert=>fail( lx_error->text ).
     ENDTRY.
   ENDMETHOD.
@@ -45,7 +45,7 @@ CLASS ltcl_builder IMPLEMENTATION.
   METHOD build.
     TRY.
         rs_result = NEW zcl_cfo_brief_builder( )->build( is_input = zcl_cfo_demo_seed=>scenario( ) is_sim = is_sim ).
-      CATCH zcx_cc_error INTO DATA(lx_error).
+      CATCH zcx_cfo_error INTO DATA(lx_error).
         cl_abap_unit_assert=>fail( lx_error->text ).
     ENDTRY.
   ENDMETHOD.

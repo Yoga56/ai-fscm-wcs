@@ -92,7 +92,7 @@ CLASS zcl_cfo_brief_job IMPLEMENTATION.
             " flushes the mail queue (no business data is changed)
             COMMIT ENTITIES.
             log( |Brief for { lv_company } sent| ).
-          CATCH zcx_cc_error INTO DATA(lx_error).
+          CATCH zcx_cfo_error INTO DATA(lx_error).
             log( iv_text = lx_error->text iv_severity = if_bali_constants=>c_severity_warning ).
         ENDTRY.
       ENDIF.
