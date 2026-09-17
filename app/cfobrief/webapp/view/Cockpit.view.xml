@@ -1,0 +1,454 @@
+<mvc:View
+  controllerName="cfo.brief.controller.Cockpit"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:f="sap.f"
+  xmlns:grid="sap.ui.layout.cssgrid"
+  xmlns:layout="sap.ui.layout"
+  xmlns:viz="sap.viz.ui5.controls"
+  xmlns:vizData="sap.viz.ui5.data"
+  xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
+  height="100%">
+
+  <f:DynamicPage id="page" busy="{app>/busy}" busyIndicatorDelay="0" toggleHeaderOnTitleClick="false">
+
+    <!-- ============================================================ title -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:heading>
+          <HBox alignItems="Center" wrap="Wrap">
+            <Title text="{i18n>cockpitTitle}" level="H1" class="sapUiSmallMarginEnd" />
+            <ObjectStatus
+              icon="sap-icon://ai"
+              inverted="true"
+              text="{parts: [{path: 'Engine', targetType: 'any'}, {path: 'ModelUsed', targetType: 'any'}], formatter: '.formatter.engineText'}"
+              state="{path: 'Engine', targetType: 'any', formatter: '.formatter.engineState'}" />
+          </HBox>
+        </f:heading>
+        <f:expandedContent>
+          <Text text="{parts: [{path: 'CompanyCode', targetType: 'any'}, {path: 'BriefDate', targetType: 'any'}, {path: 'DataMode', targetType: 'any'}, {path: 'HorizonDays', targetType: 'any'}], formatter: '.subtitle'}" />
+        </f:expandedContent>
+        <f:snappedContent>
+          <Text text="{Headline}" />
+        </f:snappedContent>
+        <f:actions>
+          <Input
+            id="companyInput"
+            value="{app>/companyCode}"
+            width="6rem"
+            maxLength="4"
+            placeholder="{i18n>company}"
+            tooltip="{i18n>company}"
+            submit=".onCompanyChange" />
+          <Button id="generateButton" text="{i18n>generate}" type="Emphasized" icon="sap-icon://synchronize" press=".onGenerate" />
+          <Button text="{i18n>refreshAi}" icon="sap-icon://ai" press=".onRefreshAi" />
+          <Button text="{i18n>inbox}" icon="sap-icon://email" press=".onInbox" />
+          <ToggleButton icon="sap-icon://sidebar" pressed="{app>/showSide}" tooltip="{i18n>assistant}" />
+        </f:actions>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- =========================================================== header -->
+    <f:header>
+      <f:DynamicPageHeader pinnable="true">
+        <FlexBox wrap="Wrap" class="cfoKpiRow">
+
+          <VBox class="cfoKpi">
+            <Label text="{i18n>kpiCash}" />
+            <Text class="cfoKpiValue" text="{parts: [{path: 'CashToday', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+            <ObjectStatus
+              text="{parts: [{path: 'CashAfterRun', targetType: 'any'}, {path: 'RunHoldsFloor', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.afterRunText'}"
+              state="{path: 'RunHoldsFloor', targetType: 'any', formatter: '.formatter.runState'}" />
+          </VBox>
+
+          <VBox class="cfoKpi">
+            <Label text="{parts: [{path: 'LowPointDay', targetType: 'any'}, {path: 'LowPointDate', targetType: 'any'}], formatter: '.lowPointLabel'}" />
+            <ObjectNumber
+              class="cfoKpiValue"
+              number="{parts: [{path: 'LowPoint', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}"
+              state="{parts: [{path: 'ScheduledBreach', targetType: 'any'}, {path: 'FloorBreach', targetType: 'any'}], formatter: '.formatter.lowState'}" />
+            <ObjectStatus
+              icon="sap-icon://warning"
+              text="{parts: [{path: 'StressedLowPoint', targetType: 'any'}, {path: 'StressedLowDay', targetType: 'any'}, {path: 'FloorBreach', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.atRiskText'}"
+              state="{= %{FloorBreach} ? 'Error' : 'Success'}" />
+          </VBox>
+
+          <VBox class="cfoKpi">
+            <Label text="{i18n>kpiFloor}" />
+            <Text class="cfoKpiValue" text="{parts: [{path: 'LiquidityFloor', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+            <Text class="cfoMuted" text="{parts: [{path: 'Headroom', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.headroomText'}" />
+          </VBox>
+
+          <VBox class="cfoKpi">
+            <Label text="{i18n>kpiRun}" />
+            <Text class="cfoKpiValue" text="{parts: [{path: 'RunTotal', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+            <Text class="cfoMuted" text="{parts: [{path: 'RunInvoiceCount', targetType: 'any'}, {path: 'RunVendorCount', targetType: 'any'}, {path: 'RunDate', targetType: 'any'}], formatter: '.formatter.runText'}" />
+          </VBox>
+
+          <VBox class="cfoKpi">
+            <Label text="Working capital" />
+            <HBox alignItems="Baseline" wrap="Wrap">
+              <Text text="AR overdue {parts: [{path: 'ArOverdue', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" class="sapUiTinyMarginEnd" />
+              <ObjectStatus
+                text="{path: 'ArOverdueChangePct', targetType: 'any', formatter: '.formatter.change'}"
+                state="{parts: [{path: 'ArOverdueChangePct', targetType: 'any'}, {value: false}], formatter: '.formatter.changeState'}" />
+            </HBox>
+            <HBox alignItems="Baseline" wrap="Wrap">
+              <Text text="AP overdue {parts: [{path: 'ApOverdue', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" class="sapUiTinyMarginEnd" />
+              <ObjectStatus
+                text="{path: 'ApOverdueChangePct', targetType: 'any', formatter: '.formatter.change'}"
+                state="{= %{ApOverdueChangePct} > 0 ? 'Warning' : 'None'}" />
+            </HBox>
+            <Text class="cfoMuted" text="AP due in window {parts: [{path: 'ApDueWindow', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+          </VBox>
+
+        </FlexBox>
+      </f:DynamicPageHeader>
+    </f:header>
+
+    <!-- ========================================================== content -->
+    <f:content>
+      <layout:DynamicSideContent
+        id="sideContent"
+        containerQuery="true"
+        sideContentFallDown="BelowL"
+        showSideContent="{app>/showSide}">
+
+        <layout:mainContent>
+          <VBox>
+
+            <MessageStrip
+              text="{i18n>noBrief}"
+              type="Information"
+              showIcon="true"
+              visible="{= !${app>/briefPath} }"
+              class="sapUiSmallMargin" />
+
+            <!-- runway + what-if -->
+            <Panel headerText="{i18n>runwayTitle}" class="sapUiSmallMarginBottom">
+              <MessageStrip
+                text="{app>/scenario/summary}"
+                type="{= ${app>/scenario/breach} ? 'Error' : 'Success'}"
+                showIcon="true"
+                visible="{app>/scenario/active}"
+                class="sapUiSmallMarginBottom" />
+
+              <viz:VizFrame
+                id="runwayChart"
+                vizType="line"
+                width="100%"
+                height="20rem"
+                uiConfig="{applicationSet: 'fiori'}">
+                <viz:dataset>
+                  <vizData:FlattenedDataset data="{app>/chart}">
+                    <vizData:dimensions>
+                      <vizData:DimensionDefinition name="Day" value="{app>Label}" />
+                    </vizData:dimensions>
+                    <vizData:measures>
+                      <vizData:MeasureDefinition name="Scheduled ($M)" value="{app>Scenario}" />
+                      <vizData:MeasureDefinition name="If at-risk receipts are late ($M)" value="{app>Stressed}" />
+                      <vizData:MeasureDefinition name="Brief as generated ($M)" value="{app>Baseline}" />
+                    </vizData:measures>
+                  </vizData:FlattenedDataset>
+                </viz:dataset>
+                <viz:feeds>
+                  <vizFeeds:FeedItem
+                    uid="valueAxis"
+                    type="Measure"
+                    values="Scheduled ($M),If at-risk receipts are late ($M),Brief as generated ($M)" />
+                  <vizFeeds:FeedItem uid="categoryAxis" type="Dimension" values="Day" />
+                </viz:feeds>
+              </viz:VizFrame>
+              <Text text="{i18n>runwayHint}" class="cfoMuted sapUiTinyMarginTop" />
+
+              <OverflowToolbar style="Clear" class="sapUiSmallMarginTop">
+                <Title text="{i18n>whatIf}" level="H4" />
+                <ToolbarSpacer />
+                <Button text="{i18n>resetWhatIf}" type="Transparent" icon="sap-icon://reset" press=".onResetWhatIf" />
+              </OverflowToolbar>
+              <FlexBox wrap="Wrap" alignItems="Center" items="{app>/toggles}">
+                <HBox alignItems="Center" class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                  <Switch state="{app>on}" change=".onWhatIf" customTextOn=" " customTextOff=" " />
+                  <Label text="{app>label}" wrapping="true" />
+                </HBox>
+              </FlexBox>
+              <FlexBox wrap="Wrap" alignItems="Center">
+                <Label text="{i18n>runDelay}" labelFor="delayInput" class="sapUiTinyMarginEnd" />
+                <StepInput id="delayInput" value="{app>/runDelay}" min="0" max="10" width="7rem" change=".onWhatIf" />
+                <Label text="{i18n>floorOverride}" labelFor="floorInput" class="sapUiMediumMarginBegin sapUiTinyMarginEnd" />
+                <StepInput
+                  id="floorInput"
+                  value="{app>/floorOverrideM}"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  displayValuePrecision="1"
+                  width="8rem"
+                  change=".onWhatIf" />
+              </FlexBox>
+            </Panel>
+
+            <!-- ranked risks -->
+            <Panel headerText="{i18n>risksTitle}" class="sapUiSmallMarginBottom">
+              <Table
+                id="riskTable"
+                items="{path: '_Risk', parameters: {$orderby: 'RiskRank', $select: 'Reference'}}"
+                popinLayout="GridSmall"
+                noDataText="No exposures above the thresholds">
+                <columns>
+                  <Column width="2.5rem"><Text text="{i18n>colRank}" /></Column>
+                  <Column width="4rem" minScreenWidth="Tablet" demandPopin="true"><Text text="Steps" /></Column>
+                  <Column><Text text="{i18n>colExposure}" /></Column>
+                  <Column width="7rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>colScore}" /></Column>
+                  <Column width="7rem" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>colDecideBy}" /></Column>
+                  <Column width="10rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="" /></Column>
+                </columns>
+                <items>
+                  <ColumnListItem>
+                    <ObjectNumber
+                      number="{RiskRank}"
+                      emphasized="true"
+                      state="{path: 'Criticality', targetType: 'any', formatter: '.formatter.riskState'}" />
+                    <FormattedText htmlText="{path: 'Epard', targetType: 'any', formatter: '.formatter.epardHtml'}" />
+                    <VBox>
+                      <ObjectStatus
+                        text="{Title}"
+                        state="{path: 'Criticality', targetType: 'any', formatter: '.formatter.riskState'}"
+                        icon="{= %{Criticality} === 1 ? 'sap-icon://alert' : 'sap-icon://message-warning'}" />
+                      <Text text="{Detail}" class="cfoMuted sapUiTinyMarginTop" />
+                      <Text text="{RecommendationText}" class="sapUiTinyMarginTop" />
+                      <HBox visible="{path: 'AiNote', targetType: 'any', formatter: '.formatter.notEmpty'}" alignItems="Start" class="sapUiTinyMarginTop">
+                        <core:Icon src="sap-icon://ai" class="sapUiTinyMarginEnd" />
+                        <Text text="{AiNote}" />
+                      </HBox>
+                    </VBox>
+                    <VBox alignItems="End">
+                      <ObjectNumber number="{parts: [{path: 'Score', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+                      <Text text="{parts: [{path: 'Exposure', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'} · p {path: 'Probability', targetType: 'any', formatter: '.formatter.probability'}" class="cfoMuted" />
+                    </VBox>
+                    <Text text="{path: 'DueBy', targetType: 'any', formatter: '.formatter.shortDate'}" />
+                    <HBox justifyContent="End" wrap="Wrap">
+                      <Button
+                        icon="sap-icon://simulate"
+                        tooltip="Try it in the what-if"
+                        type="Transparent"
+                        visible="{= %{RiskType} === 'AR_LATE' || %{RiskType} === 'AP_OFFPATTERN'}"
+                        press=".onTryWhatIf" />
+                      <Button
+                        text="{i18n>draftNotice}"
+                        icon="sap-icon://email"
+                        visible="{parts: [{path: 'RiskType', targetType: 'any'}, {path: 'HasDraft', targetType: 'any'}], formatter: '.formatter.canDraftNotice'}"
+                        press=".onDraftNotice" />
+                      <ObjectStatus
+                        text="Drafted"
+                        icon="sap-icon://accept"
+                        state="Success"
+                        visible="{= %{HasDraft} === true }" />
+                    </HBox>
+                  </ColumnListItem>
+                </items>
+              </Table>
+              <OverflowToolbar style="Clear">
+                <ToolbarSpacer />
+                <Button
+                  text="{i18n>runExceptions}"
+                  icon="sap-icon://list"
+                  enabled="{= %{ReviewCount} > 0 }"
+                  press=".onRunExceptions" />
+              </OverflowToolbar>
+            </Panel>
+
+            <!-- advice -->
+            <Panel headerText="{i18n>adviceTitle}" class="sapUiSmallMarginBottom">
+              <f:GridList
+                id="adviceList"
+                items="{path: '_TradeOff', parameters: {$orderby: 'Seq'}}"
+                noDataText="No trade-offs or opportunities today">
+                <f:customLayout>
+                  <grid:GridBoxLayout boxMinWidth="20rem" />
+                </f:customLayout>
+                <f:GridListItem>
+                  <VBox class="cfoAdvice">
+                    <HBox alignItems="Center">
+                      <FormattedText htmlText="{path: 'Kind', targetType: 'any', formatter: '.adviceBadge'}" />
+                      <core:Icon src="{path: 'Kind', targetType: 'any', formatter: '.formatter.kindIcon'}" class="sapUiTinyMarginEnd" />
+                      <Title text="{path: 'Kind', targetType: 'any', formatter: '.formatter.kindText'}" wrapping="true" />
+                    </HBox>
+                    <Text text="{Title}" class="cfoHeadline sapUiTinyMarginTop" />
+                    <Text text="{Question}" class="cfoMuted sapUiTinyMarginTop" />
+
+                    <VBox visible="{= %{Kind} === 'DEFER' }" class="sapUiSmallMarginTop">
+                      <ObjectStatus
+                        title="Defer"
+                        text="{DeferName} — {parts: [{path: 'DeferAmount', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}"
+                        state="Warning" />
+                      <Text text="{DeferNote}" class="cfoMuted" />
+                      <ObjectStatus
+                        title="Pay"
+                        text="{PayName} — {parts: [{path: 'PayAmount', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}"
+                        state="Success"
+                        class="sapUiTinyMarginTop" />
+                      <Text text="{PayNote}" class="cfoMuted" />
+                    </VBox>
+
+                    <Text
+                      visible="{path: 'Income', targetType: 'any', formatter: '.formatter.positive'}"
+                      text="≈ {parts: [{path: 'Income', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}"
+                      class="cfoIncome sapUiSmallMarginTop" />
+
+                    <VBox class="cfoAdviceRec">
+                      <Text text="{Recommendation}" />
+                    </VBox>
+                    <Text text="{Detail}" class="sapUiTinyMarginTop" />
+                    <Text text="{Caveat}" class="cfoCaveat sapUiTinyMarginTop" visible="{path: 'Caveat', targetType: 'any', formatter: '.formatter.notEmpty'}" />
+                    <Text text="{ConfidenceNote}" class="cfoCaveat" visible="{path: 'ConfidenceNote', targetType: 'any', formatter: '.formatter.notEmpty'}" />
+                    <HBox visible="{path: 'AiNote', targetType: 'any', formatter: '.formatter.notEmpty'}" class="sapUiTinyMarginTop">
+                      <core:Icon src="sap-icon://ai" class="sapUiTinyMarginEnd" />
+                      <Text text="{AiNote}" />
+                    </HBox>
+
+                    <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginTop">
+                      <ObjectStatus
+                        text="{Status} · {Confidence}"
+                        state="{path: 'Status', targetType: 'any', formatter: '.formatter.adviceState'}"
+                        inverted="true" />
+                      <Button
+                        text="{path: 'HasDraft', targetType: 'any', formatter: '.formatter.proposeText'}"
+                        icon="sap-icon://write-new"
+                        enabled="{path: 'HasDraft', targetType: 'any', formatter: '.formatter.canPropose'}"
+                        type="Emphasized"
+                        press=".onProposeDecision" />
+                    </HBox>
+                  </VBox>
+                </f:GridListItem>
+              </f:GridList>
+            </Panel>
+
+            <!-- drafts -->
+            <Panel headerText="{i18n>draftsTitle}" class="sapUiSmallMarginBottom">
+              <MessageStrip text="{i18n>draftsHint}" showIcon="true" class="sapUiTinyMarginBottom" />
+              <Table
+                id="draftTable"
+                items="{path: '_ActionDraft', parameters: {$orderby: 'CreatedAt desc'}}"
+                noDataText="No drafts yet - use the draft buttons on risks and advice"
+                popinLayout="GridSmall">
+                <columns>
+                  <Column width="10rem" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>colType}" /></Column>
+                  <Column><Text text="{i18n>colSubject}" /></Column>
+                  <Column width="7rem" hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="Amount" /></Column>
+                  <Column width="7rem"><Text text="{i18n>colStatus}" /></Column>
+                  <Column width="15rem" hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="" /></Column>
+                </columns>
+                <items>
+                  <ColumnListItem type="Navigation" press=".onOpenDraft">
+                    <VBox>
+                      <Text text="{path: 'ActionType', targetType: 'any', formatter: '.formatter.actionTypeText'}" />
+                      <Text text="{path: 'Engine', targetType: 'any', formatter: '.formatter.engineText'}" class="cfoMuted" />
+                    </VBox>
+                    <VBox>
+                      <Text text="{Subject}" />
+                      <Text text="To: {Recipient}" class="cfoMuted" />
+                    </VBox>
+                    <Text text="{parts: [{path: 'Amount', targetType: 'any'}, {path: 'Currency', targetType: 'any'}], formatter: '.formatter.money'}" />
+                    <ObjectStatus text="{Status}" state="{path: 'Status', targetType: 'any', formatter: '.formatter.draftState'}" inverted="true" />
+                    <HBox justifyContent="End" wrap="Wrap">
+                      <Button
+                        text="{i18n>submit}"
+                        type="Emphasized"
+                        visible="{path: 'Status', targetType: 'any', formatter: '.formatter.isDraft'}"
+                        press=".onSubmitDraft" />
+                      <Button
+                        text="{i18n>approve}"
+                        type="Accept"
+                        visible="{path: 'Status', targetType: 'any', formatter: '.formatter.isRouted'}"
+                        press=".onApproveDraft"
+                        class="sapUiTinyMarginEnd" />
+                      <Button
+                        text="{i18n>reject}"
+                        type="Reject"
+                        visible="{path: 'Status', targetType: 'any', formatter: '.formatter.isRouted'}"
+                        press=".onRejectDraft" />
+                    </HBox>
+                  </ColumnListItem>
+                </items>
+              </Table>
+            </Panel>
+
+          </VBox>
+        </layout:mainContent>
+
+        <!-- ======================================================= AI panel -->
+        <layout:sideContent>
+          <VBox class="sapUiSmallMargin">
+            <Title text="{i18n>assistant}" level="H3" />
+            <Text text="{Headline}" class="cfoHeadline sapUiSmallMarginTop" />
+            <Text text="{Narrative}" class="sapUiTinyMarginTop" />
+            <MessageStrip
+              text="{ErrorText}"
+              type="Warning"
+              showIcon="true"
+              visible="{path: 'ErrorText', targetType: 'any', formatter: '.formatter.notEmpty'}"
+              class="sapUiSmallMarginTop" />
+
+            <Text text="{i18n>whatMoved}" class="cfoSideTitle" />
+            <HBox alignItems="Start">
+              <FormattedText htmlText="&lt;span class=&quot;epard epard-E&quot;&gt;E&lt;/span&gt;" />
+              <Text text="{ExplainText}" renderWhitespace="true" />
+            </HBox>
+
+            <Text text="{i18n>oneClick}" class="cfoSideTitle" />
+            <Button
+              text="{i18n>runExceptions}"
+              icon="sap-icon://list"
+              width="100%"
+              enabled="{= %{ReviewCount} > 0 }"
+              press=".onRunExceptions" />
+            <Button
+              text="Draft the top collection notice"
+              icon="sap-icon://email"
+              width="100%"
+              press=".onTopNotice"
+              class="sapUiTinyMarginTop" />
+            <Button
+              text="Draft all open advice"
+              icon="sap-icon://write-new"
+              width="100%"
+              press=".onDraftAllAdvice"
+              class="sapUiTinyMarginTop" />
+
+            <Text text="{i18n>quickPrompts}" class="cfoSideTitle" />
+            <FlexBox wrap="Wrap" items="{app>/followUps}">
+              <Button text="{app>text}" type="Ghost" class="cfoPrompt" press=".onQuickPrompt" />
+            </FlexBox>
+
+            <List items="{app>/chat}" showNoData="false" showSeparators="None" class="sapUiSmallMarginTop">
+              <CustomListItem>
+                <VBox class="sapUiTinyMarginBottom">
+                  <HBox visible="{= ${app>role} === 'user' }" class="cfoChatUser">
+                    <Text text="{app>text}" />
+                  </HBox>
+                  <VBox visible="{= ${app>role} === 'ai' }" class="cfoChatAi">
+                    <Text text="{app>text}" />
+                    <ObjectStatus text="{app>engine}" state="{app>state}" class="sapUiTinyMarginTop" />
+                  </VBox>
+                </VBox>
+              </CustomListItem>
+            </List>
+
+            <TextArea
+              id="questionInput"
+              value="{app>/question}"
+              placeholder="{i18n>askPlaceholder}"
+              rows="2"
+              growing="true"
+              width="100%"
+              class="sapUiSmallMarginTop" />
+            <Button text="{i18n>send}" type="Emphasized" icon="sap-icon://paper-plane" width="100%" press=".onAsk" />
+          </VBox>
+        </layout:sideContent>
+
+      </layout:DynamicSideContent>
+    </f:content>
+  </f:DynamicPage>
+</mvc:View>

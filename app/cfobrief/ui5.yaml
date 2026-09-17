@@ -1,0 +1,32 @@
+# Live backend: proxies the OData V4 service to your S/4HANA or BTP ABAP system.
+# Set the URL (and client) below, or use a BTP destination via "destination:".
+specVersion: "4.0"
+metadata:
+  name: cfo.brief
+type: application
+framework:
+  name: SAPUI5
+  version: "1.136.0"
+  libraries:
+    - name: sap.m
+    - name: sap.f
+    - name: sap.ui.core
+    - name: sap.ui.layout
+    - name: sap.viz
+    - name: themelib_sap_horizon
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        backend:
+          - path: /sap
+            url: https://my402244-api.s4hana.cloud.sap
+            authenticationType: reentranceTicket   # S/4HANA Cloud: opens a browser sign-in
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300

@@ -4,11 +4,10 @@ app/cfobrief/mock/data/generated/
 .DS_Store
 DUMP/
 
-# Kept locally, not pushed to this abapGit-linked repo: the ABAP object
-# files at the repo root are what abapGit scans (FOLDER_LOGIC=PREFIX has
-# no non-ABAP folders left to misinterpret as subpackages).
-app/
-docs/
+# On the "ui" branch only (this one): app/ and docs/ are tracked here so
+# Business Application Studio can clone this branch and deploy the UI5
+# app. They stay gitignored on "main", which is the abapGit-linked
+# branch - a non-ABAP folder there breaks FOLDER_LOGIC=PREFIX.
 tools/
 .claude/
 PASTE_CHECKLIST.md
