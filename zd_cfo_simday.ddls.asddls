@@ -1,5 +1,5 @@
 @EndUserText.label: 'CFO Brief - what-if runway day'
-define abstract entity ZD_CFO_SimDay
+define abstract entity ZD_CFO_SIMDAY
 {
   DayIndex         : abap.int4;
   CalendarDate     : abap.dats;

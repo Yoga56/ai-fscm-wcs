@@ -1,18 +1,18 @@
 @EndUserText.label: 'CFO Daily Brief - access by company code'
 @MappingRole: true
 define role ZR_CFO_BRIEF {
-  grant select on ZR_CFO_Brief
+  grant select on ZR_CFO_BRIEF
     where ( CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
 
-  grant select on ZR_CFO_RunwayDay
+  grant select on ZR_CFO_RUNWAYDAY
     where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
 
-  grant select on ZR_CFO_Risk
+  grant select on ZR_CFO_RISK
     where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
 
-  grant select on ZR_CFO_TradeOff
+  grant select on ZR_CFO_TRADEOFF
     where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
 
-  grant select on ZR_CFO_ActionDraft
+  grant select on ZR_CFO_ACTIONDRAFT
     where ( _Brief.CompanyCode ) = aspect pfcg_auth( ZCFO_BRF, BUKRS, ACTVT = '03' );
 }

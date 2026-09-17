@@ -1,5 +1,5 @@
 @EndUserText.label: 'CFO Brief - what-if toggles'
-define abstract entity ZD_CFO_SimParam
+define abstract entity ZD_CFO_SIMPARAM
 {
   @EndUserText.label: 'Receivables assumed late (comma-separated item ids)'
   LateItems     : abap.char(1000);

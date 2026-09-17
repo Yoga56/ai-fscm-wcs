@@ -1,8 +1,8 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief - Advice'
 @Metadata.allowExtensions: true
-define view entity ZC_CFO_TradeOff
-  as projection on ZR_CFO_TradeOff
+define view entity ZC_CFO_TRADEOFF
+  as projection on ZR_CFO_TRADEOFF
 {
   key TradeoffUuid,
       BriefUuid,
@@ -45,5 +45,5 @@ define view entity ZC_CFO_TradeOff
       AiNote,
       HasDraft,
       LocalLastChangedAt,
-      _Brief : redirected to parent ZC_CFO_Brief
+      _Brief : redirected to parent ZC_CFO_BRIEF
 }

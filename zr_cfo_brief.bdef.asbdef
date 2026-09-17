@@ -7,7 +7,7 @@ strict ( 2 );
   Nothing in this business object posts documents or changes payment runs.
 */
 
-define behavior for ZR_CFO_Brief alias Brief
+define behavior for ZR_CFO_BRIEF alias Brief
 persistent table ztcfo_brief
 lock master
 authorization master ( global, instance )
@@ -32,11 +32,11 @@ etag master LocalLastChangedAt
   update;
   delete;
 
-  static action ( authorization : global ) generateBrief parameter ZD_CFO_GenParam result [1] $self;
+  static action ( authorization : global ) generateBrief parameter ZD_CFO_GENPARAM result [1] $self;
 
   action refreshAi result [1] $self;
-  action simulate parameter ZD_CFO_SimParam result [0..*] ZD_CFO_SimDay;
-  action askCopilot parameter ZD_CFO_AskParam result [1] ZD_CFO_Answer;
+  action simulate parameter ZD_CFO_SIMPARAM result [0..*] ZD_CFO_SIMDAY;
+  action askCopilot parameter ZD_CFO_ASKPARAM result [1] ZD_CFO_ANSWER;
   action ( features : instance ) proposeRunExceptions result [1] $self;
 
   mapping for ztcfo_brief
@@ -92,7 +92,7 @@ etag master LocalLastChangedAt
   association _ActionDraft { internal create; }
 }
 
-define behavior for ZR_CFO_RunwayDay alias RunwayDay
+define behavior for ZR_CFO_RUNWAYDAY alias RunwayDay
 persistent table ztcfo_runway
 lock dependent by _Brief
 authorization dependent by _Brief
@@ -127,7 +127,7 @@ etag master LocalLastChangedAt
   association _Brief;
 }
 
-define behavior for ZR_CFO_Risk alias Risk
+define behavior for ZR_CFO_RISK alias Risk
 persistent table ztcfo_risk
 lock dependent by _Brief
 authorization dependent by _Brief
@@ -174,7 +174,7 @@ etag master LocalLastChangedAt
   association _Brief;
 }
 
-define behavior for ZR_CFO_TradeOff alias TradeOff
+define behavior for ZR_CFO_TRADEOFF alias TradeOff
 persistent table ztcfo_tradeoff
 lock dependent by _Brief
 authorization dependent by _Brief
@@ -234,7 +234,7 @@ etag master LocalLastChangedAt
   association _Brief;
 }
 
-define behavior for ZR_CFO_ActionDraft alias ActionDraft
+define behavior for ZR_CFO_ACTIONDRAFT alias ActionDraft
 persistent table ztcfo_action
 with additional save with full data
 lock dependent by _Brief
@@ -254,8 +254,8 @@ etag master LocalLastChangedAt
   delete ( features : instance );
 
   action ( features : instance ) submitForApproval result [1] $self;
-  action ( features : instance ) approve parameter ZD_CFO_DecisionParam result [1] $self;
-  action ( features : instance ) reject  parameter ZD_CFO_DecisionParam result [1] $self;
+  action ( features : instance ) approve parameter ZD_CFO_DECISIONPARAM result [1] $self;
+  action ( features : instance ) reject  parameter ZD_CFO_DECISIONPARAM result [1] $self;
 
   validation validateContent on save { create; update; field Recipient, Subject, Body; }
 

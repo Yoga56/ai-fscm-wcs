@@ -4,7 +4,7 @@
 @ObjectModel.usageType: { serviceQuality: #C, sizeCategory: #XL, dataClass: #TRANSACTIONAL }
 /* Internal source for ZCL_CFO_SOURCE_LIVE - not exposed in any service.
    Access is controlled on the brief (ZCFO_BRF) that is built from it. */
-define view entity ZI_CFO_OpenItem
+define view entity ZI_CFO_OPENITEM
   as select from I_OperationalAcctgDocItem as Item
     left outer to one join I_Customer as Cust on Cust.Customer = Item.Customer
     left outer to one join I_Supplier as Supp on Supp.Supplier = Item.Supplier

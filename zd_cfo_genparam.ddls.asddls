@@ -1,5 +1,5 @@
 @EndUserText.label: 'CFO Brief - generate brief parameters'
-define abstract entity ZD_CFO_GenParam
+define abstract entity ZD_CFO_GENPARAM
 {
   @EndUserText.label: 'Company Code'
   CompanyCode : abap.char(4);

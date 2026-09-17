@@ -1,12 +1,12 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief'
 @Metadata.ignorePropagatedAnnotations: true
-define root view entity ZR_CFO_Brief
+define root view entity ZR_CFO_BRIEF
   as select from ztcfo_brief
-  composition [0..*] of ZR_CFO_RunwayDay   as _RunwayDay
-  composition [0..*] of ZR_CFO_Risk        as _Risk
-  composition [0..*] of ZR_CFO_TradeOff    as _TradeOff
-  composition [0..*] of ZR_CFO_ActionDraft as _ActionDraft
+  composition [0..*] of ZR_CFO_RUNWAYDAY   as _RunwayDay
+  composition [0..*] of ZR_CFO_RISK        as _Risk
+  composition [0..*] of ZR_CFO_TRADEOFF    as _TradeOff
+  composition [0..*] of ZR_CFO_ACTIONDRAFT as _ActionDraft
 {
   key brief_uuid            as BriefUuid,
 

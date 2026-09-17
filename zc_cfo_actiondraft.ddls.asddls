@@ -1,8 +1,8 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief - Action draft'
 @Metadata.allowExtensions: true
-define view entity ZC_CFO_ActionDraft
-  as projection on ZR_CFO_ActionDraft
+define view entity ZC_CFO_ACTIONDRAFT
+  as projection on ZR_CFO_ACTIONDRAFT
 {
   key ActionUuid,
       BriefUuid,
@@ -29,5 +29,5 @@ define view entity ZC_CFO_ActionDraft
       LastChangedBy,
       LastChangedAt,
       LocalLastChangedAt,
-      _Brief : redirected to parent ZC_CFO_Brief
+      _Brief : redirected to parent ZC_CFO_BRIEF
 }

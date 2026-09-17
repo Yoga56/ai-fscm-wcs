@@ -1,9 +1,9 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief - Action draft'
 @Metadata.ignorePropagatedAnnotations: true
-define view entity ZR_CFO_ActionDraft
+define view entity ZR_CFO_ACTIONDRAFT
   as select from ztcfo_action
-  association to parent ZR_CFO_Brief as _Brief on $projection.BriefUuid = _Brief.BriefUuid
+  association to parent ZR_CFO_BRIEF as _Brief on $projection.BriefUuid = _Brief.BriefUuid
 {
   key action_uuid           as ActionUuid,
       brief_uuid            as BriefUuid,

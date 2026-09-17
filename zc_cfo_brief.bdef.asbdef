@@ -1,7 +1,7 @@
 projection;
 strict ( 2 );
 
-define behavior for ZC_CFO_Brief alias Brief
+define behavior for ZC_CFO_BRIEF alias Brief
 use etag
 {
   use update;
@@ -19,13 +19,13 @@ use etag
   use association _ActionDraft;
 }
 
-define behavior for ZC_CFO_RunwayDay alias RunwayDay
+define behavior for ZC_CFO_RUNWAYDAY alias RunwayDay
 use etag
 {
   use association _Brief;
 }
 
-define behavior for ZC_CFO_Risk alias Risk
+define behavior for ZC_CFO_RISK alias Risk
 use etag
 {
   use action draftCollectionNotice;
@@ -33,7 +33,7 @@ use etag
   use association _Brief;
 }
 
-define behavior for ZC_CFO_TradeOff alias TradeOff
+define behavior for ZC_CFO_TRADEOFF alias TradeOff
 use etag
 {
   use action proposeDecision;
@@ -41,7 +41,7 @@ use etag
   use association _Brief;
 }
 
-define behavior for ZC_CFO_ActionDraft alias ActionDraft
+define behavior for ZC_CFO_ACTIONDRAFT alias ActionDraft
 use etag
 {
   use update;

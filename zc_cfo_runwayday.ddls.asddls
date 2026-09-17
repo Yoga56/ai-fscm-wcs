@@ -1,8 +1,8 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief - Runway day'
 @Metadata.allowExtensions: true
-define view entity ZC_CFO_RunwayDay
-  as projection on ZR_CFO_RunwayDay
+define view entity ZC_CFO_RUNWAYDAY
+  as projection on ZR_CFO_RUNWAYDAY
 {
   key RunwayUuid,
       BriefUuid,
@@ -27,5 +27,5 @@ define view entity ZC_CFO_RunwayDay
       IsRunDay,
       IsLowPoint,
       LocalLastChangedAt,
-      _Brief : redirected to parent ZC_CFO_Brief
+      _Brief : redirected to parent ZC_CFO_BRIEF
 }

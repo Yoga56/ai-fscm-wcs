@@ -1,8 +1,8 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief - Ranked risk'
 @Metadata.allowExtensions: true
-define view entity ZC_CFO_Risk
-  as projection on ZR_CFO_Risk
+define view entity ZC_CFO_RISK
+  as projection on ZR_CFO_RISK
 {
   key RiskUuid,
       BriefUuid,
@@ -28,5 +28,5 @@ define view entity ZC_CFO_Risk
       Status,
       HasDraft,
       LocalLastChangedAt,
-      _Brief : redirected to parent ZC_CFO_Brief
+      _Brief : redirected to parent ZC_CFO_BRIEF
 }

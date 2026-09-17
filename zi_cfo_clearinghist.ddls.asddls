@@ -4,7 +4,7 @@
 @ObjectModel.usageType: { serviceQuality: #C, sizeCategory: #XL, dataClass: #TRANSACTIONAL }
 /* Pay-date model input: customer invoices (debit) and supplier invoices (credit)
    that were cleared by another document. DaysLate < 0 = paid early. */
-define view entity ZI_CFO_ClearingHist
+define view entity ZI_CFO_CLEARINGHIST
   as select from I_OperationalAcctgDocItem as Item
 {
   key Item.CompanyCode,

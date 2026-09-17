@@ -1,9 +1,9 @@
 @AccessControl.authorizationCheck: #CHECK
 @EndUserText.label: 'CFO Daily Brief'
 @Metadata.allowExtensions: true
-define root view entity ZC_CFO_Brief
+define root view entity ZC_CFO_BRIEF
   provider contract transactional_query
-  as projection on ZR_CFO_Brief
+  as projection on ZR_CFO_BRIEF
 {
   key BriefUuid,
       CompanyCode,
@@ -61,8 +61,8 @@ define root view entity ZC_CFO_Brief
       LastChangedBy,
       LastChangedAt,
       LocalLastChangedAt,
-      _RunwayDay : redirected to composition child ZC_CFO_RunwayDay,
-      _Risk : redirected to composition child ZC_CFO_Risk,
-      _TradeOff : redirected to composition child ZC_CFO_TradeOff,
-      _ActionDraft : redirected to composition child ZC_CFO_ActionDraft
+      _RunwayDay : redirected to composition child ZC_CFO_RUNWAYDAY,
+      _Risk : redirected to composition child ZC_CFO_RISK,
+      _TradeOff : redirected to composition child ZC_CFO_TRADEOFF,
+      _ActionDraft : redirected to composition child ZC_CFO_ACTIONDRAFT
 }
