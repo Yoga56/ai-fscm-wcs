@@ -102,6 +102,10 @@ CLASS zcl_cfo_demo_seed IMPLEMENTATION.
     out->write( |Demo scenario deployed for company code { c_company }, brief date | &&
                 |{ zcl_cfo_calendar=>short_text( lv_anchor ) } ({ zcl_cfo_calendar=>iso( lv_anchor ) }).| ).
 
+    " Keep the scenario even if generating the brief fails: ROLLBACK ENTITIES below
+    " would otherwise also undo the table changes made by DEPLOY.
+    COMMIT WORK.
+
     " Save one brief right away, through the BO (same call as the daily job), so the
     " service has something to show. This runs the authorization check for ZCFO_BRF.
     MODIFY ENTITIES OF zr_cfo_brief
