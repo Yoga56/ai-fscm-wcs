@@ -36,7 +36,8 @@ CLASS zcl_cfo_gemini_adapter IMPLEMENTATION.
     ENDIF.
     mo_client = NEW #( iv_comm_scenario = lv_comm_scenario
                        iv_comm_service  = lv_comm_service
-                       iv_model         = lv_model ).
+                       iv_model         = lv_model
+                       iv_api_key       = condense( CONV string( is_config-ai_api_key ) ) ).
   ENDMETHOD.
 
 

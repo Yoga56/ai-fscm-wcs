@@ -46,6 +46,12 @@ define table ztcfo_config {
   comm_scenario             : abap.char(30);     // communication arrangement scenario (S/4HANA Cloud)
   comm_service              : abap.char(30);     // its outbound service id
   model                     : abap.char(60);     // default gemini-2.5-pro
+  ai_api_key                : abap.char(200);    // Google AI Studio key. Custom scenarios have no
+                                                  // platform-level header injection, so the client
+                                                  // sends this as x-goog-api-key itself. Restrict
+                                                  // display/change authority on this table (S_TABU_*)
+                                                  // to admins - it is a secret in a Z-table, not a
+                                                  // BTP destination property.
   sender_email              : abap.char(241);
   recipient_email           : abap.char(241);    // CFO - daily brief
   approver_email            : abap.char(241);    // approvals for action drafts
