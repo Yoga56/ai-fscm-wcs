@@ -4,6 +4,14 @@
   <DATA>
    <MASTER_LANGUAGE>E</MASTER_LANGUAGE>
    <FOLDER_LOGIC>PREFIX</FOLDER_LOGIC>
+   <IGNORE>
+    <item>/.gitignore</item>
+    <item>/README.md</item>
+    <item>/app/</item>
+    <item>/docs/</item>
+    <item>/tools/</item>
+    <item>/.claude/</item>
+   </IGNORE>
   </DATA>
  </asx:values>
 </asx:abap>
