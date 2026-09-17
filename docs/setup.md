@@ -123,8 +123,10 @@ this step puts it in the ABAP system as a real Fiori app.
 1. In the BTP cockpit, open **Business Application Studio** and create a dev space of type
    **SAP Fiori** (this is the type with the Fiori deployment tools built in; *Full Stack Cloud
    Application* also works). Wait for it to start.
-2. In its terminal: `git clone https://github.com/Yoga56/ai-fscm-wcs.git`, then
-   `cd ai-fscm-wcs/app/cfobrief && npm install`.
+2. In its terminal: `git clone --branch ui https://github.com/Yoga56/ai-fscm-wcs.git`, then
+   `cd ai-fscm-wcs/app/cfobrief && npm install`. Use the **`ui`** branch, not `main` - `main` is
+   what abapGit pulls into ADT and deliberately has no `app/` folder at all (a non-ABAP folder
+   there breaks the abapGit link); `ui` carries the same ABAP source plus `app/` and `docs/`.
 3. `app/cfobrief/ui5-deploy.yaml` already points at `my402244-api.s4hana.cloud.sap`, client `080`,
    package `ZAI_FSCM_` - change these if you'd rather use a dedicated UI package. Leave
    `transport` empty; the deploy step below prompts for one.
