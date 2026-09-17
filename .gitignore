@@ -3,3 +3,11 @@ app/cfobrief/dist/
 app/cfobrief/mock/data/generated/
 .DS_Store
 DUMP/
+
+# Kept locally, not pushed to this abapGit-linked repo: the ABAP object
+# files at the repo root are what abapGit scans (FOLDER_LOGIC=PREFIX has
+# no non-ABAP folders left to misinterpret as subpackages).
+app/
+docs/
+tools/
+.claude/

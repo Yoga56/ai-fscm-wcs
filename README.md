@@ -10,9 +10,16 @@ impact × probability · **A**dvise on trade-offs and opportunities · **D**raft
 - **Frontend:** freestyle SAPUI5 — `app/cfobrief`
 - **AI:** Gemini through the BTP destination shared with `ABAP_CLEAN_CORE_ANALYSIS`
 
+> **This repository holds only the ABAP objects** (flat at the root, `.abapgit.xml` included) so
+> abapGit's `FOLDER_LOGIC=PREFIX` never has to interpret a non-ABAP folder as a subpackage. The
+> freestyle UI5 app (`app/cfobrief`), `docs/`, and `tools/` referenced below exist in the original
+> local working copy this project was built in, but are **not pushed here** — abapGit doesn't need
+> them, and mixing them into the same tree it scans caused it to try (and fail) to auto-create a
+> subpackage for every folder it didn't recognize. Ask if you'd like those pushed to a second repo.
+
 The illustrative numbers from the slides (cash $22M, run $12M, low point $9.5M on day 9, ABC $4M
 likely late …) ship as a demo company and are pinned by tests on both sides —
-see [`docs/scenario.md`](docs/scenario.md).
+see `docs/scenario.md` in the local working copy.
 
 ---
 
@@ -26,7 +33,7 @@ see [`docs/scenario.md`](docs/scenario.md).
    for the payment-run owner, a deferral or priority approval, a deposit proposal. People edit,
    route and approve them. Nothing posts documents, sets payment blocks or releases a run.
 3. **Clean core.** Released CDS views only; what is not released (the F110 proposal, bank statement
-   items) is simulated or pluggable — [`docs/data-sources.md`](docs/data-sources.md).
+   items) is simulated or pluggable — `docs/data-sources.md` (local working copy).
 4. **Names never leave the system.** Customers and suppliers are pseudonymised before the AI call.
 5. **Two data modes.** `LIVE` reads the ledger, `DEMO` reads the seeded slide scenario.
 
@@ -108,37 +115,40 @@ already in dependency order (abapGit resolves that itself).
 > abapGit does **not** pull the shared Gemini client (`ZCX_CC_ERROR`, `ZCL_CC_JSON`,
 > `ZCL_CC_GEMINI_CLIENT`) — those live in the sibling `ABAP_CLEAN_CORE_ANALYSIS` package/repo.
 > Either pull that repo into the same system first (own package, with a dependency), or copy the
-> three classes in and rename them to `ZCL_CFO_*` — see [docs/setup.md §0](docs/setup.md).
+> three classes in and rename them to `ZCL_CFO_*` — see `docs/setup.md` §0 (local working copy).
 
 **Via manual copy-paste:** files are named like the sibling project — the extension says which ADT
 editor the content goes into. Create them in this order:
 
-1. **Shared client** — see [docs/setup.md §0](docs/setup.md)
+1. **Shared client** — see `docs/setup.md` §0 (local working copy)
 2. **Tables** — `*.tabl.asddls` at the repo root (`ZTCFO_CONFIG`, `_PLANFLOW`, `_CRIT`, `_DEMO_ITEM`, `_DEMO_MISC`, `_BRIEF`, `_RUNWAY`, `_RISK`, `_TRADEOFF`, `_ACTION`)
 3. **Types and helpers** — `ZIF_CFO_TYPES`, `ZCL_CFO_CALENDAR`, `ZCL_CFO_FORMAT`
-4. **Source views** — `ZI_CFO_OpenItem`, `ZI_CFO_ClearingHist`, `ZI_CFO_PoSpend` (check the field list in [docs/data-sources.md](docs/data-sources.md))
+4. **Source views** — `ZI_CFO_OpenItem`, `ZI_CFO_ClearingHist`, `ZI_CFO_PoSpend` (check the field list in `docs/data-sources.md` (local working copy))
 5. **Data access** — `ZIF_CFO_DATA_SOURCE`, `ZCL_CFO_SOURCE_DEMO`, `ZCL_CFO_SOURCE_LIVE`, `ZCL_CFO_DATA_LOADER`, `ZCL_CFO_DEMO_SEED`
 6. **Engine** — `ZCL_CFO_PAYDATE_PREDICTOR`, `ZCL_CFO_RUNWAY`, `ZCL_CFO_VARIANCE`, `ZCL_CFO_RISK_RANKER`, `ZCL_CFO_TRADEOFF`, `ZCL_CFO_BRIEF_BUILDER`
 7. **AI and drafts** — `ZIF_CFO_LLM`, `ZCL_CFO_GEMINI_ADAPTER`, `ZCL_CFO_PSEUDONYMIZER`, `ZCL_CFO_FACT_GUARD`, `ZCL_CFO_PROMPT_BUILDER`, `ZCL_CFO_AI_ADVISOR`, `ZCL_CFO_DRAFTER`, `ZCL_CFO_MAILER`
 8. **Abstract entities** — `ZD_CFO_GenParam`, `ZD_CFO_SimParam`, `ZD_CFO_SimDay`, `ZD_CFO_AskParam`, `ZD_CFO_Answer`, `ZD_CFO_DecisionParam`
 9. **BO views** — `ZR_CFO_RunwayDay`, `ZR_CFO_Risk`, `ZR_CFO_TradeOff`, `ZR_CFO_ActionDraft`, `ZR_CFO_Brief`, then the `ZC_*` projections
-10. **Access control** — authorization object `ZCFO_BRF` ([setup §1](docs/setup.md)), DCLs `ZR_CFO_BRIEF`, `ZC_CFO_BRIEF`
+10. **Access control** — authorization object `ZCFO_BRF` (`docs/setup.md` §1 (local working copy)), DCLs `ZR_CFO_BRIEF`, `ZC_CFO_BRIEF`
 11. **Behavior** — BDEF `ZR_CFO_Brief` → behavior pool `ZBP_R_CFO_BRIEF` (`.clas.abap` + `.locals_imp.abap`) → projection BDEF `ZC_CFO_Brief`
 12. **Service** — `ZUI_CFO_BRIEF`, binding `ZUI_CFO_BRIEF_O4` (OData V4 - UI), publish
-13. **Job** — `ZCL_CFO_BRIEF_JOB` + catalog entry, template, log object ([setup §4](docs/setup.md))
+13. **Job** — `ZCL_CFO_BRIEF_JOB` + catalog entry, template, log object (`docs/setup.md` §4 (local working copy))
 14. **Tests** — paste `*.testclasses.abap` into the *Test Classes* tab of `ZCL_CFO_BRIEF_BUILDER` and `ZCL_CFO_AI_ADVISOR`
 15. Run `ZCL_CFO_DEMO_SEED`, then `ZCL_CFO_SMOKE_TEST`
 
 ## Repository layout
 
-| Path | Content |
-|---|---|
-| `/` (repo root) | one flat abapGit-managed folder — tables (`*.tabl.asddls`), source and BO CDS views (`*.ddls.asddls`), access control (`*.dcls.asdcls`), behavior definitions and pool (`*.bdef.asbdef`, `*.clas.abap`), engine/AI/drafts/mail/seed classes (`*.clas.abap`), service definition (`*.srvd.srvdsrv`), application job (`*.clas.abap`) — plus `.abapgit.xml` |
-| `app/cfobrief/webapp` | UI5 app: `view/Cockpit`, `view/Inbox`, `fragment/ActionDraft`, `model/BriefService` |
-| `app/cfobrief/mock` | JS twin of the engine, mock data and action handlers |
-| `app/cfobrief/test` | engine tests (Node test runner) |
-| `tools/gen_metadata.py` | builds the mock `$metadata` from the CDS sources |
-| `docs/` | setup, data sources, scenario |
+Only the first row below is actually pushed to this repository — see the note near the top of
+this file. The rest describe the local working copy this project was built in.
+
+| Path | Content | In this repo? |
+|---|---|---|
+| `/` (repo root) | one flat abapGit-managed folder — tables (`*.tabl.asddls`), source and BO CDS views (`*.ddls.asddls`), access control (`*.dcls.asdcls`), behavior definitions and pool (`*.bdef.asbdef`, `*.clas.abap`), engine/AI/drafts/mail/seed classes (`*.clas.abap`), service definition (`*.srvd.srvdsrv`), application job (`*.clas.abap`) — plus `.abapgit.xml` | yes |
+| `app/cfobrief/webapp` | UI5 app: `view/Cockpit`, `view/Inbox`, `fragment/ActionDraft`, `model/BriefService` | local only |
+| `app/cfobrief/mock` | JS twin of the engine, mock data and action handlers | local only |
+| `app/cfobrief/test` | engine tests (Node test runner) | local only |
+| `tools/gen_metadata.py` | builds the mock `$metadata` from the CDS sources | local only |
+| `docs/` | setup, data sources, scenario | local only |
 
 ## Limits worth knowing
 
