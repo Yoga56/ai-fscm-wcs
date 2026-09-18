@@ -20,6 +20,7 @@ builder:
         target:
           url: https://my402244-api.s4hana.cloud.sap
           client: "080"
+          authenticationType: reentranceTicket   # SSO tenant: same browser sign-in npm start uses
         app:
           name: ZCFO_BRIEF
           description: CFO Daily Brief
